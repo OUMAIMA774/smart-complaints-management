@@ -127,7 +127,6 @@ smart-complaints-management/
 
 ### Suivi d'une réclamation
 
-*(Ajouter une capture d'écran ici)*
 <img width="1366" height="611" alt="image" src="https://github.com/user-attachments/assets/84c094c4-5267-4f3d-a804-956cde0c5806" />
 <img width="1366" height="602" alt="image" src="https://github.com/user-attachments/assets/48d4c72d-cb0b-4b9a-8381-81b815f638fc" />
 
@@ -142,7 +141,7 @@ smart-complaints-management/
 
 <img width="1364" height="599" alt="image" src="https://github.com/user-attachments/assets/ac58a775-bddd-4680-83a2-108a01d35571" />
 
-### Exports administratifs
+### Tableau de bord administratifs
 
 <img width="1366" height="607" alt="image" src="https://github.com/user-attachments/assets/7c4e69a8-ff6a-4407-b8f3-3444a87d8d0d" />
 <img width="1366" height="605" alt="image" src="https://github.com/user-attachments/assets/e93dfe51-5277-4e36-9bae-0975d8269051" />
