@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Changer mot de passe</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .password-card {
+            width: 460px;
+            background: white;
+            border-radius: 22px;
+            padding: 35px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+        }
+
+        .icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #14532d, #15803d);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #15803d;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="password-card">
+    <div class="icon">🔐</div>
+
+    <h1>Changer le mot de passe</h1>
+    <p>Pour sécuriser votre compte, veuillez remplacer le mot de passe temporaire par un nouveau mot de passe personnel.</p>
+
+    {% if erreur %}
+        <div class="error">{{ erreur }}</div>
+    {% endif %}
+
+    {% if succes %}
+        <div class="success">{{ succes }}</div>
+    {% endif %}
+
+    <form method="POST" action="/changer-mot-de-passe">
+        <label>Nouveau mot de passe</label>
+        <input type="password" name="nouveau_mot_de_passe" placeholder="Minimum 6 caractères" required>
+
+        <label>Confirmer le mot de passe</label>
+        <input type="password" name="confirmation" placeholder="Confirmer le mot de passe" required>
+
+        <button type="submit">Modifier le mot de passe</button>
+    </form>
+</div>
+
+</body>
+</html>

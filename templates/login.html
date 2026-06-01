@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion - Espace commune</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7f6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 430px;
+            background: white;
+            border-radius: 22px;
+            padding: 35px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #14532d, #15803d);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #14532d;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #64748b;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            margin-bottom: 18px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background: #15803d;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .back {
+            display: block;
+            margin-top: 18px;
+            text-align: center;
+            color: #15803d;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-card">
+    <div class="logo">🏛</div>
+
+    <h1>Connexion</h1>
+    <p>Accédez à l’espace interne de traitement des réclamations citoyennes.</p>
+
+    {% if erreur %}
+        <div class="error">{{ erreur }}</div>
+    {% endif %}
+
+    <form method="POST" action="/login">
+        <label>Email professionnel</label>
+        <input type="email" name="email" placeholder="exemple@commune.ma" required>
+
+        <label>Mot de passe</label>
+        <input type="password" name="mot_de_passe" placeholder="Votre mot de passe" required>
+
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <a class="back" href="/">Retour à l’accueil</a>
+</div>
+
+</body>
+</html>

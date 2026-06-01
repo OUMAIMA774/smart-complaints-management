@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exports – {{ division.nom_division if division else 'Division' }} – Kénitra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --g900:#0a3d20;--g800:#14532d;--g700:#15803d;--g600:#16a34a;
+  --g500:#22c55e;--g400:#4ade80;--g200:#bbf7d0;--g100:#dcfce7;--g50:#f0fdf4;
+  --white:#fff;--bg:#f2f5f2;--border:#dde8d8;
+  --s900:#0f172a;--s800:#1e293b;--s600:#475569;--s400:#94a3b8;--s200:#e2e8f0;--s100:#f1f5f9;
+  --rose:#f43f5e;--rose-light:#fff1f3;
+  --amber:#f59e0b;--amber-light:#fef3c7;
+  --blue:#3b82f6;--blue-light:#eff6ff;
+  --violet:#7c3aed;--violet-light:#ede9fe;
+  --cyan:#06b6d4;--cyan-light:#ecfeff;
+  --sidebar-w:264px;--topbar-h:64px;--radius:14px;
+  --shadow:0 4px 24px rgba(10,61,32,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--s800);display:flex;min-height:100vh;overflow-x:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--g900);position:fixed;left:0;top:0;bottom:0;display:flex;flex-direction:column;z-index:100;overflow:hidden;}
+.sidebar::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(74,222,128,.13) 0%,transparent 70%);pointer-events:none;}
+.sidebar::after{content:'';position:absolute;bottom:-80px;left:-40px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(22,163,74,.08) 0%,transparent 70%);pointer-events:none;}
+.sidebar-logo{padding:24px 22px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.08);}
+.nav-crest{width:42px;height:42px;flex-shrink:0;}
+.logo-title{font-size:13px;font-weight:700;color:white;letter-spacing:-.2px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.division-badge{margin:16px 14px 4px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;}
+.division-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--g400);flex-shrink:0;box-shadow:0 0 0 3px rgba(74,222,128,.2);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,.4)}50%{box-shadow:0 0 0 5px rgba(74,222,128,0)}}
+.division-badge-label{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;}
+.division-badge-name{font-size:13px;font-weight:700;color:var(--g400);line-height:1.2;}
+.sidebar-section{padding:20px 18px 6px;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.22);}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 14px;margin:2px 10px;border-radius:11px;color:rgba(255,255,255,.55);text-decoration:none;font-size:13.5px;font-weight:500;transition:all .18s;position:relative;}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(74,222,128,.12);color:var(--g400);border:1px solid rgba(74,222,128,.22);}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--g400);border-radius:0 3px 3px 0;}
+.nav-icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:rgba(244,63,94,.25);color:#fca5a5;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;}
+.sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.07);}
+.user-block{display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,.06);border-radius:12px;border:1px solid rgba(255,255,255,.08);}
+.user-avatar{width:34px;height:34px;background:linear-gradient(135deg,var(--g600),var(--g400));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0;}
+.user-name{font-size:12.5px;font-weight:600;color:white}
+.user-role{font-size:11px;color:rgba(255,255,255,.35)}
+.logout-btn{margin-left:auto;width:30px;height:30px;border-radius:8px;background:rgba(244,63,94,.15);color:var(--rose);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:.15s;flex-shrink:0;}
+.logout-btn:hover{background:rgba(244,63,94,.25)}
+.logout-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);width:calc(100% - var(--sidebar-w));min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:white;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50;}
+.topbar-title{flex:1}
+.topbar-title h1{font-family:'Fraunces',serif;font-size:19px;color:var(--g800);font-weight:800;letter-spacing:-.3px}
+.topbar-title span{font-size:12.5px;color:var(--s400);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.live-badge{display:flex;align-items:center;gap:7px;background:var(--g50);border:1px solid var(--g200);padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;color:var(--g700);}
+.live-dot{width:7px;height:7px;background:var(--g500);border-radius:50%;animation:pulse 2s infinite}
+.topbar-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--s400);font-weight:500;background:var(--s100);padding:6px 12px;border-radius:8px;}
+
+/* ── CONTENT ── */
+.content{padding:22px 28px 48px;flex:1}
+
+/* ── SECTION HEADER ── */
+.section-hd{display:flex;align-items:center;gap:10px;margin-bottom:16px;margin-top:6px;}
+.section-hd-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--s400);white-space:nowrap;}
+.section-hd-line{flex:1;height:1px;background:var(--border);}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px;}
+.stat-mini{background:white;border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:14px;transition:transform .2s,box-shadow .2s;}
+.stat-mini:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.stat-mini-icon{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.stat-mini-icon svg{width:19px;height:19px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.stat-mini-val{font-family:'Fraunces',serif;font-size:26px;font-weight:800;line-height:1;color:var(--g800);}
+.stat-mini-lbl{font-size:11px;color:var(--s400);font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+
+/* ── EXPORT GRID ── */
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:28px;}
+
+.export-card{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:0;overflow:hidden;transition:transform .2s,box-shadow .2s;
+}
+.export-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);}
+
+.export-card-header{
+  padding:22px 24px 18px;
+  display:flex;align-items:flex-start;gap:16px;
+  border-bottom:1px solid var(--border);
+}
+.export-card-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.export-card-icon svg{width:26px;height:26px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.export-card-title{font-size:16px;font-weight:800;color:var(--s800);margin-bottom:4px;font-family:'Fraunces',serif;}
+.export-card-desc{font-size:13px;color:var(--s400);line-height:1.55;}
+.export-card-body{padding:18px 24px 22px;}
+.export-card-meta{
+  display:flex;align-items:center;gap:18px;margin-bottom:18px;
+  padding:12px 14px;background:var(--s100);border-radius:10px;border:1px solid var(--border);
+}
+.meta-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--s600);}
+.meta-item svg{width:13px;height:13px;stroke:var(--s400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.meta-item strong{color:var(--s800);font-weight:700;}
+
+/* Excel card */
+.export-card.excel .export-card-icon{background:var(--g50);border:1px solid var(--g200);}
+.export-card.excel .export-card-icon svg{stroke:var(--g700);}
+.export-card.excel .export-card-header{background:linear-gradient(135deg,var(--g50) 0%,white 100%);}
+
+/* PDF card */
+.export-card.pdf .export-card-icon{background:var(--rose-light);border:1px solid rgba(244,63,94,.2);}
+.export-card.pdf .export-card-icon svg{stroke:var(--rose);}
+.export-card.pdf .export-card-header{background:linear-gradient(135deg,#fff1f3 0%,white 100%);}
+
+/* CSV card */
+.export-card.csv .export-card-icon{background:var(--blue-light);border:1px solid rgba(59,130,246,.2);}
+.export-card.csv .export-card-icon svg{stroke:var(--blue);}
+.export-card.csv .export-card-header{background:linear-gradient(135deg,var(--blue-light) 0%,white 100%);}
+
+/* Urgentes card */
+.export-card.urgentes .export-card-icon{background:var(--amber-light);border:1px solid rgba(245,158,11,.2);}
+.export-card.urgentes .export-card-icon svg{stroke:var(--amber);}
+.export-card.urgentes .export-card-header{background:linear-gradient(135deg,var(--amber-light) 0%,white 100%);}
+
+/* ── BUTTONS ── */
+.btn-export{
+  display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  width:100%;padding:13px 20px;border-radius:10px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;border:none;text-decoration:none;transition:.15s;
+  letter-spacing:.01em;
+}
+.btn-export svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.btn-export:active{transform:scale(.98);}
+
+.btn-excel{background:var(--g700);color:white;}
+.btn-excel:hover{background:var(--g800);}
+.btn-pdf{background:var(--rose);color:white;}
+.btn-pdf:hover{background:#e11d48;}
+.btn-csv{background:var(--blue);color:white;}
+.btn-csv:hover{background:#2563eb;}
+.btn-urgentes{background:var(--amber);color:white;}
+.btn-urgentes:hover{background:#d97706;}
+
+/* Format tags */
+.format-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 10px;border-radius:999px;
+  font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+}
+.tag-excel{background:var(--g50);color:var(--g700);border:1px solid var(--g200);}
+.tag-pdf{background:var(--rose-light);color:var(--rose);border:1px solid rgba(244,63,94,.2);}
+.tag-csv{background:var(--blue-light);color:var(--blue);border:1px solid rgba(59,130,246,.2);}
+.tag-urgentes{background:var(--amber-light);color:var(--amber);border:1px solid rgba(245,158,11,.2);}
+
+/* ── INFO BANNER ── */
+.info-banner{
+  background:var(--g50);border:1px solid var(--g200);border-left:3px solid var(--g500);
+  border-radius:var(--radius);padding:16px 20px;
+  display:flex;align-items:flex-start;gap:14px;
+  font-size:13px;color:var(--g800);line-height:1.6;
+}
+.info-banner svg{width:18px;height:18px;stroke:var(--g600);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:1px;}
+
+/* ── FILTER CARD (export filtré) ── */
+.filter-export-card{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:18px;
+}
+.filter-export-hd{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.filter-export-hd-icon{width:30px;height:30px;border-radius:8px;background:var(--violet-light);display:flex;align-items:center;justify-content:center;}
+.filter-export-hd-icon svg{width:15px;height:15px;stroke:var(--violet);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.filter-export-body{padding:18px 20px;}
+.filter-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;}
+.filter-group{display:flex;flex-direction:column;gap:5px;flex:1;min-width:160px;}
+.filter-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--s400);}
+.filter-select,.filter-input{
+  padding:10px 13px;border:1px solid var(--border);border-radius:9px;
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--s800);
+  background:var(--s100);outline:none;transition:.15s;
+}
+.filter-select:focus,.filter-input:focus{border-color:var(--g400);background:white;box-shadow:0 0 0 3px rgba(74,222,128,.12);}
+.btn-filter-export{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:9px;
+  background:var(--violet);color:white;border:none;
+  font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:700;
+  cursor:pointer;text-decoration:none;transition:.15s;white-space:nowrap;
+}
+.btn-filter-export svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.btn-filter-export:hover{background:#6d28d9;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:950px){
+  .sidebar{display:none}
+  .main{margin-left:0;width:100%}
+  .content{padding:16px}
+  .export-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){
+  .stats-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="nav-crest">
+      <img src="{{ url_for('static', filename='images/logo.png') }}"
+           alt="Logo" style="width:42px;height:42px;object-fit:contain;">
+    </div>
+    <div>
+      <div class="logo-title">Kénitra</div>
+      <div class="logo-sub">Gestion des réclamations</div>
+    </div>
+  </div>
+
+  <div class="division-badge">
+    <div class="division-badge-dot"></div>
+    <div>
+      <div class="division-badge-label">Division active</div>
+      <div class="division-badge-name">
+        {% if division %}{{ division.nom_division }}{% else %}Ma Division{% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Navigation</div>
+
+  <a href="/dashboard/{{ division_id }}" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Tableau de bord
+  </a>
+
+  <a href="/exports/{{ division_id }}" class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exports
+  </a>
+
+  <div class="sidebar-bottom">
+    <div class="user-block">
+      <div class="user-avatar">{{ utilisateur.nom[0]|upper if utilisateur and utilisateur.nom else 'D' }}</div>
+      <div>
+        <div class="user-name">{{ utilisateur.nom if utilisateur else 'Agent' }}</div>
+        <div class="user-role">Agent division</div>
+      </div>
+      <a class="logout-btn" href="/logout" title="Déconnexion">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>Exports</h1>
+      <span>Téléchargement des données · {{ division.nom_division if division else 'Ma Division' }}</span>
+    </div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>En ligne</div>
+      <div class="topbar-time" id="current-time"></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ── STATS ── -->
+    <div class="section-hd">
+      <span class="section-hd-label">Aperçu des données</span>
+      <div class="section-hd-line"></div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-mini">
+        <div class="stat-mini-icon" style="background:var(--g50);border:1px solid var(--g200);">
+          <svg viewBox="0 0 24 24" style="stroke:var(--g700);"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <div class="stat-mini-val" data-target="{{ stats.total or 0 }}">0</div>
+          <div class="stat-mini-lbl">Total réclamations</div>
+        </div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon" style="background:var(--rose-light);border:1px solid rgba(244,63,94,.2);">
+          <svg viewBox="0 0 24 24" style="stroke:var(--rose);"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        </div>
+        <div>
+          <div class="stat-mini-val" style="color:var(--rose);" data-target="{{ stats.urgentes or 0 }}">0</div>
+          <div class="stat-mini-lbl">Urgentes</div>
+        </div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon" style="background:var(--amber-light);border:1px solid rgba(245,158,11,.2);">
+          <svg viewBox="0 0 24 24" style="stroke:var(--amber);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="stat-mini-val" style="color:var(--amber);" data-target="{{ stats.en_cours or 0 }}">0</div>
+          <div class="stat-mini-lbl">En cours</div>
+        </div>
+      </div>
+      <div class="stat-mini">
+        <div class="stat-mini-icon" style="background:var(--g50);border:1px solid var(--g200);">
+          <svg viewBox="0 0 24 24" style="stroke:var(--g600);"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div>
+          <div class="stat-mini-val" data-target="{{ stats.cloturees or 0 }}">0</div>
+          <div class="stat-mini-lbl">Clôturées</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EXPORT RAPIDE ── -->
+    <div class="section-hd">
+      <span class="section-hd-label">Export rapide</span>
+      <div class="section-hd-line"></div>
+    </div>
+
+    <div class="export-grid">
+
+      <!-- Excel -->
+      <div class="export-card excel">
+        <div class="export-card-header">
+          <div class="export-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <span class="export-card-title">Export Excel</span>
+              <span class="format-tag tag-excel">.xlsx</span>
+            </div>
+            <div class="export-card-desc">Toutes les réclamations de votre division dans un fichier Excel complet avec tous les champs.</div>
+          </div>
+        </div>
+        <div class="export-card-body">
+          <div class="export-card-meta">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+              <strong>{{ stats.total or 0 }}</strong> lignes
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+              12 colonnes
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Temps réel
+            </div>
+          </div>
+          <a href="/exports/{{ division_id }}/excel" class="btn-export btn-excel">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Télécharger Excel
+          </a>
+        </div>
+      </div>
+
+      <!-- PDF -->
+      <div class="export-card pdf">
+        <div class="export-card-header">
+          <div class="export-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6m-6 4h4"/></svg>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <span class="export-card-title">Rapport PDF</span>
+              <span class="format-tag tag-pdf">.pdf</span>
+            </div>
+            <div class="export-card-desc">Rapport formaté prêt à imprimer avec en-tête officielle et liste de toutes les réclamations.</div>
+          </div>
+        </div>
+        <div class="export-card-body">
+          <div class="export-card-meta">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+              <strong>{{ stats.total or 0 }}</strong> entrées
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              Format A4
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Imprimable
+            </div>
+          </div>
+          <a href="/exports/{{ division_id }}/pdf" class="btn-export btn-pdf">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Télécharger PDF
+          </a>
+        </div>
+      </div>
+
+      <!-- CSV -->
+      <div class="export-card csv">
+        <div class="export-card-header">
+          <div class="export-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <span class="export-card-title">Export CSV</span>
+              <span class="format-tag tag-csv">.csv</span>
+            </div>
+            <div class="export-card-desc">Format texte brut compatible avec tous les outils d'analyse (Python, R, LibreOffice, etc.).</div>
+          </div>
+        </div>
+        <div class="export-card-body">
+          <div class="export-card-meta">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>
+              <strong>{{ stats.total or 0 }}</strong> lignes
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"/></svg>
+              UTF-8
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Léger
+            </div>
+          </div>
+          <a href="/exports/{{ division_id }}/csv" class="btn-export btn-csv">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Télécharger CSV
+          </a>
+        </div>
+      </div>
+
+      <!-- Urgentes -->
+      <div class="export-card urgentes">
+        <div class="export-card-header">
+          <div class="export-card-icon">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+              <span class="export-card-title">Réclamations urgentes</span>
+              <span class="format-tag tag-urgentes">.xlsx</span>
+            </div>
+            <div class="export-card-desc">Export ciblé uniquement sur les réclamations de priorité <strong>urgente</strong> et <strong>élevée</strong> non clôturées.</div>
+          </div>
+        </div>
+        <div class="export-card-body">
+          <div class="export-card-meta">
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              <strong>{{ stats.urgentes or 0 }}</strong> urgentes
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Actives seul.
+            </div>
+            <div class="meta-item">
+              <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Prioritaires
+            </div>
+          </div>
+          <a href="/exports/{{ division_id }}/urgentes" class="btn-export btn-urgentes">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Télécharger Urgentes
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── EXPORT FILTRÉ ── -->
+    <div class="section-hd">
+      <span class="section-hd-label">Export personnalisé</span>
+      <div class="section-hd-line"></div>
+    </div>
+
+    <div class="filter-export-card">
+      <div class="filter-export-hd">
+        <div class="filter-export-hd-icon">
+          <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--s800);">Filtrer avant d'exporter</div>
+          <div style="font-size:12px;color:var(--s400);">Choisissez les critères pour exporter un sous-ensemble précis.</div>
+        </div>
+      </div>
+      <div class="filter-export-body">
+        <form class="filter-row" method="GET" action="/exports/{{ division_id }}/excel">
+          <div class="filter-group">
+            <label class="filter-label">Statut</label>
+            <select name="statut" class="filter-select">
+              <option value="">Tous les statuts</option>
+              <option value="nouvelle">Nouvelle</option>
+              <option value="en_cours">En cours</option>
+              <option value="repondue">Répondue</option>
+              <option value="cloturee">Clôturée</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Priorité</label>
+            <select name="priorite" class="filter-select">
+              <option value="">Toutes les priorités</option>
+              <option value="urgente">🔴 Urgente</option>
+              <option value="elevee">🟠 Élevée</option>
+              <option value="moyenne">🟡 Moyenne</option>
+              <option value="faible">🟢 Faible</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Format</label>
+            <select name="format_export" class="filter-select" id="format-select">
+              <option value="excel">Excel (.xlsx)</option>
+              <option value="pdf">PDF (.pdf)</option>
+              <option value="csv">CSV (.csv)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-filter-export" id="export-btn">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Exporter la sélection
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── INFO ── -->
+    <div class="info-banner">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        Les exports contiennent uniquement les réclamations affectées à votre division
+        (<strong>{{ division.nom_division if division else 'Ma Division' }}</strong>).
+        Les données sont extraites en temps réel depuis la base de données et reflètent l'état actuel.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ── CLOCK ── */
+function tick(){
+  const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');
+  const el=document.getElementById('current-time');if(el)el.textContent=`${h}:${m}:${s}`;
+}
+tick();setInterval(tick,1000);
+
+/* ── COUNTERS ── */
+document.querySelectorAll('.stat-mini-val[data-target]').forEach(el=>{
+  const target=parseInt(el.dataset.target)||0;
+  let cur=0;const step=Math.max(1,Math.ceil(target/25));
+  const iv=setInterval(()=>{cur=Math.min(cur+step,target);el.textContent=cur;if(cur>=target)clearInterval(iv);},35);
+});
+
+/* ── DYNAMIC FORM ACTION based on format ── */
+const formatSelect=document.getElementById('format-select');
+const exportBtn=document.getElementById('export-btn');
+const form=exportBtn?.closest('form');
+if(formatSelect&&form){
+  formatSelect.addEventListener('change',()=>{
+    const base='/exports/{{ division_id }}/';
+    const fmt=formatSelect.value;
+    form.action=base+fmt;
+  });
+}
+</script>
+
+</body>
+</html>

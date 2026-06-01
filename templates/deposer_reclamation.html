@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Déposer une Réclamation — Commune de Kénitra</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:wght@700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --green:      #15803d;
+            --green-dark: #14532d;
+            --green-light: #dcfce7;
+            --green-mid:  #22c55e;
+            --gold:       #b45309;
+            --navy:       #0c1a2e;
+            --slate:      #1e293b;
+            --muted:      #64748b;
+            --border:     #e2e8f0;
+            --bg:         #f8fafc;
+            --red-ma:     #c0392b;
+            --focus-ring: rgba(21,128,61,0.28);
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: #334155;
+            min-height: 100vh;
+        }
+
+        /* ── MOROCCAN STRIPE ── */
+        .ma-stripe {
+            height: 4px;
+            background: linear-gradient(90deg, var(--red-ma) 33.3%, white 33.3%, white 66.6%, var(--green) 66.6%);
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            background: white;
+            border-bottom: 3px solid var(--green);
+            padding: 0 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+        }
+        .nav-crest {
+    width: 54px;
+    height: 54px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+    padding: 3px;
+}
+        .nav-crest-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+        }
+        .nav-crest-text {
+            color: white;
+            font-family: 'Fraunces', serif;
+            font-size: 1.3rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+        .nav-crest-star { color: #fbbf24; font-size: 0.5rem; letter-spacing: 2px; }
+        .nav-commune {
+            font-family: 'Fraunces', serif;
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--navy);
+        }
+        .nav-region { font-size: 0.69rem; color: var(--muted); }
+        .nav-back {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.855rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 9px;
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+        }
+        .nav-back:hover {
+            color: var(--green);
+            border-color: var(--green);
+            background: var(--green-light);
+        }
+
+        /* ── PAGE BREADCRUMB ── */
+        .breadcrumb {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 11px 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+        .breadcrumb a { color: var(--green); text-decoration: none; font-weight: 500; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb svg { stroke: var(--muted); }
+
+        /* ── MAIN LAYOUT ── */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            min-height: calc(100vh - 72px);
+        }
+
+        /* ── SIDE PANEL ── */
+        .side-panel {
+            background: linear-gradient(160deg, var(--navy) 0%, #0f2744 50%, #143d25 100%);
+            padding: 3rem 2.5rem;
+            position: sticky;
+            top: 68px;
+            height: calc(100vh - 68px);
+            overflow-y: auto;
+        }
+        .side-inner { max-width: 310px; }
+
+        .side-official {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 50px;
+            padding: 5px 14px;
+            font-size: 0.73rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 1.75rem;
+        }
+        .side-official-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 6px #4ade80;
+        }
+
+        .side-title {
+            font-family: 'Fraunces', serif;
+            font-size: 2.3rem;
+            font-weight: 900;
+            color: white;
+            line-height: 1.12;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+        }
+        .side-title .accent { color: #4ade80; }
+
+        .side-desc {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.89rem;
+            line-height: 1.78;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Steps in sidebar */
+        .side-steps { display: flex; flex-direction: column; gap: 1.1rem; margin-bottom: 2.25rem; }
+        .side-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            opacity: 0.45;
+            transition: opacity 0.2s;
+        }
+        .side-step.active { opacity: 1; }
+        .side-step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.7);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .side-step.active .side-step-num {
+            background: var(--green);
+            border-color: var(--green);
+            color: white;
+        }
+        .side-step-text strong {
+            display: block;
+            font-size: 0.87rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 2px;
+        }
+        .side-step-text p {
+            font-size: 0.79rem;
+            color: rgba(255,255,255,0.42);
+            line-height: 1.5;
+        }
+
+        /* Info card in sidebar */
+        .side-info {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 1.2rem 1.4rem;
+            display: flex;
+            gap: 13px;
+            align-items: flex-start;
+        }
+        .side-info-icon {
+            width: 38px;
+            height: 38px;
+            background: rgba(21,128,61,0.28);
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .side-info-icon svg { stroke: #4ade80; }
+        .side-info p { font-size: 0.81rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+        .side-info p strong { color: white; font-weight: 700; }
+
+        /* ── FORM PANEL ── */
+        .form-panel {
+            padding: 2.75rem 3rem;
+            background: var(--bg);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            border: 1.5px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            padding: 1.75rem 2.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(to right, #f8fafc, white);
+        }
+        .form-card-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: var(--navy);
+            margin-bottom: 5px;
+        }
+        .form-card-header p { font-size: 0.845rem; color: var(--muted); }
+        .req-star { color: #e74c3c; font-size: 0.95rem; }
+
+        /* Progress bar */
+        .form-progress {
+            height: 3px;
+            background: var(--green-light);
+            position: relative;
+        }
+        .form-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--green-mid));
+            width: 33%;
+            transition: width 0.5s ease;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .form-body { padding: 2rem 2.25rem; }
+
+        /* Section blocks */
+        .form-section { margin-bottom: 2.25rem; }
+        .form-section:last-of-type { margin-bottom: 1.5rem; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px dashed var(--border);
+        }
+        .section-num-badge {
+            width: 36px;
+            height: 36px;
+            background: var(--green);
+            color: white;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Fraunces', serif;
+            font-size: 1rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .section-header-text strong {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--navy);
+        }
+        .section-header-text span { font-size: 0.79rem; color: var(--muted); }
+
+        .optional-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: #f1f5f9;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 2px 9px;
+            border-radius: 50px;
+            margin-left: 8px;
+        }
+
+        /* Form grid */
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.1rem;
+        }
+        .field-span { grid-column: 1 / -1; }
+
+        /* Field */
+        .field { display: flex; flex-direction: column; gap: 6px; }
+        .field label {
+            font-size: 0.83rem;
+            font-weight: 700;
+            color: var(--slate);
+            letter-spacing: 0.1px;
+        }
+        .field label .req-star { margin-left: 2px; }
+
+        /* Input wrapper */
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrap .iicon {
+            position: absolute;
+            left: 13px;
+            pointer-events: none;
+            display: flex;
+        }
+        .input-wrap .iicon svg { stroke: #94a3b8; }
+
+        .input-wrap input,
+        .input-wrap select {
+            width: 100%;
+            padding: 11px 14px 11px 40px;
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
+            font-size: 0.88rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--slate);
+            background: white;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .input-wrap input:focus,
+        .input-wrap select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+        }
+        .input-wrap input:hover,
+        .input-wrap select:hover {
+            border-color: #94a3b8;
+        }
+        .input-wrap input::placeholder { color: #cbd5e1; }
+
+        /* Textarea */
+        .textarea-wrap { position: relative; }
+        .textarea-wrap textarea {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: 11px;
+            font-size: 0.88rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--slate);
+            background: white;
+            transition: all 0.2s;
+            outline: none;
+            resize: vertical;
+            min-height: 130px;
+            line-height: 1.65;
+        }
+        .textarea-wrap textarea:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px var(--focus-ring);
+        }
+        .textarea-wrap textarea:hover { border-color: #94a3b8; }
+        .textarea-wrap textarea::placeholder { color: #cbd5e1; }
+        .char-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 14px;
+            font-size: 0.74rem;
+            color: #cbd5e1;
+            pointer-events: none;
+        }
+
+        .field-hint {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            color: var(--muted);
+            margin-top: 3px;
+        }
+        .field-hint svg { stroke: var(--muted); flex-shrink: 0; }
+
+        /* Upload zone */
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 14px;
+            padding: 2.5rem 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.22s;
+            background: #fafcff;
+            position: relative;
+        }
+        .upload-zone:hover {
+            border-color: var(--green);
+            background: #f0fdf4;
+        }
+        .upload-zone.drag-over {
+            border-color: var(--green);
+            background: var(--green-light);
+        }
+        .upload-zone input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            inset: 0;
+            cursor: pointer;
+        }
+        .upload-icon {
+            width: 52px;
+            height: 52px;
+            background: var(--green-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+        .upload-icon svg { stroke: var(--green); }
+        .upload-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--slate);
+            margin-bottom: 5px;
+        }
+        .upload-text span { color: var(--green); }
+        .upload-hint { font-size: 0.79rem; color: var(--muted); }
+
+        .upload-preview {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .upload-preview svg { stroke: var(--green); }
+        .upload-preview span {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--slate);
+        }
+        .remove-btn {
+            background: #fee2e2;
+            border: none;
+            color: #b91c1c;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 700;
+            transition: background 0.15s;
+        }
+        .remove-btn:hover { background: #fecaca; }
+
+        /* Divider */
+        .form-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 2rem 0;
+        }
+
+        /* Form footer */
+        .form-footer {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 1.5rem 2.25rem;
+            background: #f8fafc;
+            border-top: 1px solid var(--border);
+        }
+        .btn-cancel {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 11px 20px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-decoration: none;
+            border: 1.5px solid var(--border);
+            transition: all 0.2s;
+        }
+        .btn-cancel:hover {
+            color: var(--slate);
+            border-color: #94a3b8;
+            background: #f1f5f9;
+        }
+        .btn-submit {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            padding: 13px 28px;
+            background: var(--green);
+            color: white;
+            border: none;
+            border-radius: 11px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(21,128,61,0.35);
+            transition: all 0.22s;
+        }
+        .btn-submit:hover {
+            background: var(--green-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(21,128,61,0.45);
+        }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .spin {
+            animation: rotate 0.8s linear infinite;
+        }
+        @keyframes rotate { to { transform: rotate(360deg); } }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 1024px) {
+            .main-layout { grid-template-columns: 300px 1fr; }
+            .form-panel { padding: 2rem 1.75rem; }
+        }
+        @media (max-width: 768px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .side-panel {
+                position: relative;
+                top: 0;
+                height: auto;
+                padding: 2.5rem 1.75rem;
+            }
+            .side-inner { max-width: 100%; }
+            .form-panel { padding: 1.5rem 1rem; }
+            .field-grid { grid-template-columns: 1fr; }
+            .form-body { padding: 1.5rem 1.25rem; }
+            .form-card-header { padding: 1.25rem; }
+            .form-footer { padding: 1.25rem; }
+            .navbar { padding: 0 1rem; }
+            .breadcrumb { padding: 11px 1rem; }
+            .nav-region { display: none; }
+        }
+
+
+        /* ── LANGUAGE SWITCH FR / AR ── */
+        #content-ar { display: none; }
+        .lang-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--slate);
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            padding: 8px 16px;
+            font-size: 0.855rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-right: 10px;
+        }
+        .lang-switch:hover {
+            color: var(--green);
+            border-color: var(--green);
+            background: var(--green-light);
+        }
+        .nav-actions { display: flex; align-items: center; gap: 10px; }
+        .rtl-mode { direction: rtl; text-align: right; }
+        .rtl-mode .navbar,
+        .rtl-mode .breadcrumb,
+        .rtl-mode .main-layout,
+        .rtl-mode .side-step,
+        .rtl-mode .side-info,
+        .rtl-mode .section-header,
+        .rtl-mode .nav-brand,
+.rtl-mode .side-step,
+.rtl-mode .side-info,
+.rtl-mode .form-footer { flex-direction: row-reverse; }
+        .rtl-mode .form-footer,
+        .rtl-mode .nav-actions { direction: rtl; }
+        .rtl-mode .breadcrumb { flex-direction: row-reverse; justify-content: flex-end; }
+        .rtl-mode .input-wrap .iicon { left: auto; right: 13px; }
+        .rtl-mode .input-wrap input,
+        .rtl-mode .input-wrap select {
+            padding: 11px 40px 11px 14px;
+            text-align: right;
+        }
+        .rtl-mode textarea { text-align: right; direction: rtl; }
+        .rtl-mode .char-counter { right: auto; left: 14px; }
+        .rtl-mode .optional-pill { margin-left: 0; margin-right: 8px; }
+        .rtl-mode .form-card-header { background: linear-gradient(to left, #f8fafc, white); }
+        .rtl-mode .form-progress-bar { border-radius: 3px 0 0 3px; }
+        .rtl-mode .side-panel { background: linear-gradient(200deg, var(--navy) 0%, #0f2744 50%, #143d25 100%); }
+        @media (max-width: 768px) {
+            .lang-switch { padding: 8px 12px; margin-right: 0; }
+        }
+        /* Corrections RTL page déposer */
+
+.rtl-mode .section-header {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: right;
+}
+
+.rtl-mode .section-header-text {
+    text-align: right;
+}
+
+.rtl-mode .field,
+.rtl-mode .field label,
+.rtl-mode .field-hint {
+    text-align: right;
+    direction: rtl;
+}
+
+.rtl-mode .field-hint {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+
+.rtl-mode .upload-zone {
+    text-align: right;
+    direction: rtl;
+}
+
+.rtl-mode .upload-content-ar,
+.rtl-mode .upload-preview-ar {
+    text-align: center;
+    direction: rtl;
+}
+
+/* Pour cacher complètement "Aucun fichier choisi" */
+.upload-zone input[type="file"] {
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+}
+/* NAVBAR ARABE */
+.rtl-mode .navbar{
+    display:flex;
+    flex-direction:row-reverse;
+    justify-content:space-between;
+}
+
+.rtl-mode .nav-brand{
+    display:flex;
+    flex-direction:row-reverse;
+    align-items:center;
+    gap:16px;
+    text-align:right;
+}
+
+.rtl-mode .nav-brand > div:last-child{
+    text-align:right;
+}
+
+.rtl-mode .nav-actions{
+    display:flex;
+    flex-direction:row-reverse;
+    align-items:center;
+    gap:10px;
+}
+/* Etapes sidebar arabe corrigées */
+#content-ar .side-step{
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:flex-start;
+    justify-content:flex-start;
+    gap:12px;
+    direction:rtl;
+    text-align:right;
+}
+
+#content-ar .side-step-num{
+    order:0;
+    flex-shrink:0;
+}
+
+#content-ar .side-step-text{
+    order:1;
+    text-align:right;
+}
+
+#content-ar .side-step-text strong,
+#content-ar .side-step-text p{
+    text-align:right;
+}
+    </style>
+</head>
+<body>
+<div id="content-fr">
+
+    <div class="ma-stripe"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <div class="nav-crest">
+    <img src="{{ url_for('static', filename='images/logo.png') }}" 
+         alt="Logo Commune de Kénitra" 
+         style="width: 44px; height: 44px; object-fit: contain;">
+</div>
+            <div>
+                <div class="nav-commune">Commune de Kénitra</div>
+                <div class="nav-region">Région Rabat-Salé-Kénitra — Maroc</div>
+            </div>
+        </a>
+        <div class="nav-actions">
+            <button type="button" class="lang-switch" onclick="toggleLanguage()">العربية</button>
+            <a href="/" class="nav-back">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Retour à l'accueil
+            </a>
+        </div>
+    </nav>
+
+    <!-- BREADCRUMB -->
+    <div class="breadcrumb">
+        <a href="/">Accueil</a>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>Déposer une réclamation</span>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+        <!-- SIDE PANEL -->
+        <aside class="side-panel">
+            <div class="side-inner">
+                <div class="side-official">
+                    <div class="side-official-dot"></div>
+                    Formulaire officiel
+                </div>
+
+                <h1 class="side-title">
+                    Déposez votre<br>
+                    <span class="accent">réclamation</span>
+                </h1>
+
+                <p class="side-desc">
+                    Signalez un problème dans votre quartier. Notre système intelligent classe et transmet votre demande à la division concernée automatiquement.
+                </p>
+
+                <div class="side-steps">
+                    <div class="side-step active">
+                        <div class="side-step-num">1</div>
+                        <div class="side-step-text">
+                            <strong>Remplissez le formulaire</strong>
+                            <p>Informations personnelles et description du problème</p>
+                        </div>
+                    </div>
+                    <div class="side-step">
+                        <div class="side-step-num">2</div>
+                        <div class="side-step-text">
+                            <strong>Classification automatique</strong>
+                            <p>Notre IA catégorise et priorise votre réclamation</p>
+                        </div>
+                    </div>
+                    <div class="side-step">
+                        <div class="side-step-num">3</div>
+                        <div class="side-step-text">
+                            <strong>Suivi en temps réel</strong>
+                            <p>Suivez l'état avec votre CIN et code de suivi</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side-info">
+                    <div class="side-info-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <p>Un <strong>code unique de suivi</strong> vous sera remis après envoi. Conservez-le pour suivre votre réclamation à tout moment.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- FORM PANEL -->
+        <section class="form-panel">
+            <div class="form-card">
+
+                <div class="form-card-header">
+                    <h2>Nouvelle réclamation</h2>
+                    <p>Tous les champs marqués d'un <span class="req-star">*</span> sont obligatoires</p>
+                </div>
+
+                <div class="form-progress">
+                    <div class="form-progress-bar" id="progressBar"></div>
+                </div>
+
+                <div class="form-body">
+                    <form method="POST" enctype="multipart/form-data" id="reclamationForm">
+
+                        <!-- SECTION 1: Infos personnelles -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-num-badge">1</div>
+                                <div class="section-header-text">
+                                    <strong>Informations personnelles</strong>
+                                    <span>Vos coordonnées pour le suivi de votre demande</span>
+                                </div>
+                            </div>
+
+                            <div class="field-grid">
+                                <div class="field">
+                                    <label for="nom">Nom <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                        </span>
+                                        <input type="text" id="nom" name="nom" placeholder="Votre nom de famille" required autocomplete="family-name">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="prenom">Prénom <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                        </span>
+                                        <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required autocomplete="given-name">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="cin">CIN <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                                        </span>
+                                        <input type="text" id="cin" name="cin" placeholder="Ex : AB123456" required style="text-transform: uppercase;">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="telephone">Téléphone</label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.07 1.18 2 2 0 012.03 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                                        </span>
+                                        <input type="tel" id="telephone" name="telephone" placeholder="06 XX XX XX XX" autocomplete="tel">
+                                    </div>
+                                </div>
+
+                                <div class="field field-span">
+                                    <label for="email">Email</label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                        </span>
+                                        <input type="email" id="email" name="email" placeholder="votre@email.com" autocomplete="email">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <!-- SECTION 2: Détails -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-num-badge">2</div>
+                                <div class="section-header-text">
+                                    <strong>Détails de la réclamation</strong>
+                                    <span>Décrivez précisément le problème signalé</span>
+                                </div>
+                            </div>
+
+                            <div class="field-grid">
+                                <div class="field field-span">
+                                    <label for="zone">Zone / Quartier <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        </span>
+                                        <input type="text" id="zone" name="zone" placeholder="Ex : Hay Nakhil, Bir Rami, Akkari, Médina..." required>
+                                    </div>
+                                </div>
+
+                                <div class="field field-span">
+                                    <label for="objet">Objet de la réclamation <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                                        </span>
+                                        <input type="text" id="objet" name="objet" placeholder="Ex : Route endommagée devant l'école" required>
+                                    </div>
+                                </div>
+
+                                <div class="field field-span">
+                                    <label for="description">Description détaillée <span class="req-star">*</span></label>
+                                    <div class="textarea-wrap">
+                                        <textarea id="description" name="description" rows="5"
+                                            placeholder="Décrivez précisément le problème : localisation exacte, gravité, depuis combien de temps, impact sur les citoyens..." required></textarea>
+                                        <div class="char-counter"><span id="charCount">0</span> / 1000</div>
+                                    </div>
+                                    <div class="field-hint">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                        Plus votre description est précise, plus le traitement sera rapide et efficace.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <!-- SECTION 3: Pièce jointe -->
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-num-badge" style="background: #64748b;">3</div>
+                                <div class="section-header-text">
+                                    <strong>Document justificatif <span class="optional-pill">Optionnel</span></strong>
+                                    <span>Photo ou document du problème signalé</span>
+                                </div>
+                            </div>
+
+                            <div class="upload-zone" id="uploadZone">
+                                <input type="file" id="fichier" name="fichier" accept="image/*,.pdf">
+                                <div id="uploadContent">
+                                    <div class="upload-icon">
+                                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg>
+                                    </div>
+                                    <div class="upload-text">Glissez un fichier ici ou <span>cliquez pour choisir</span></div>
+                                    <div class="upload-hint">Images (JPG, PNG) ou PDF — Taille maximale : 5 Mo</div>
+                                </div>
+                                <div class="upload-preview" id="uploadPreview">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    <span id="fileName"></span>
+                                    <button type="button" class="remove-btn" id="removeFile">✕</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- FORM FOOTER -->
+                <div class="form-footer">
+                    <a href="/" class="btn-cancel">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        Annuler
+                    </a>
+                    <button type="submit" class="btn-submit" id="submitBtn" form="reclamationForm">
+                        <span id="btnText" style="display:flex; align-items:center; gap:9px;">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                            Envoyer la réclamation
+                        </span>
+                        <span id="btnLoading" style="display:none; align-items:center; gap:9px;">
+                            <svg class="spin" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".25"/><path d="M21 12a9 9 0 00-9-9"/></svg>
+                            Envoi en cours...
+                        </span>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+
+</div>
+
+<div id="content-ar">
+    <div class="ma-stripe"></div>
+
+    <nav class="navbar">
+        <a href="/" class="nav-brand">
+            <div class="nav-crest">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo Commune de Kénitra" style="width:44px;height:44px;object-fit:contain;">
+            </div>
+            <div>
+                <div class="nav-commune">جماعة القنيطرة</div>
+                <div class="nav-region">جهة الرباط سلا القنيطرة — المغرب</div>
+            </div>
+        </a>
+        <div class="nav-actions">
+            <button type="button" class="lang-switch" onclick="toggleLanguage()">Français</button>
+            <a href="/" class="nav-back">العودة إلى الرئيسية</a>
+        </div>
+    </nav>
+
+    <div class="breadcrumb">
+        <a href="/">الرئيسية</a>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <span>تقديم شكاية</span>
+    </div>
+
+    <div class="main-layout">
+        <aside class="side-panel">
+            <div class="side-inner">
+                <div class="side-official">
+                    <div class="side-official-dot"></div>
+                    استمارة رسمية
+                </div>
+
+                <h1 class="side-title">
+                    قدموا<br>
+                    <span class="accent">شكايتكم</span>
+                </h1>
+
+                <p class="side-desc">
+                    أبلغوا عن مشكل في حيكم. يقوم النظام بتصنيف الشكاية وتحديد أولويتها ثم إرسالها إلى القسم المختص تلقائياً.
+                </p>
+
+                <div class="side-steps">
+                    <div class="side-step active">
+                        <div class="side-step-num">1</div>
+                        <div class="side-step-text">
+                            <strong>املأوا الاستمارة</strong>
+                            <p>المعلومات الشخصية ووصف المشكل</p>
+                        </div>
+                    </div>
+                    <div class="side-step">
+                        <div class="side-step-num">2</div>
+                        <div class="side-step-text">
+                            <strong>تصنيف تلقائي</strong>
+                            <p>يقوم النظام بتصنيف الشكاية وتحديد الأولوية</p>
+                        </div>
+                    </div>
+                    <div class="side-step">
+                        <div class="side-step-num">3</div>
+                        <div class="side-step-text">
+                            <strong>تتبع الشكاية</strong>
+                            <p>تتبعوا الحالة باستعمال رقم البطاقة الوطنية ورمز التتبع</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side-info">
+                    <div class="side-info-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <p>سيتم منحكم <strong>رمز تتبع خاص</strong> بعد إرسال الشكاية. احتفظوا به لتتبع الطلب في أي وقت.</p>
+                </div>
+            </div>
+        </aside>
+
+        <section class="form-panel">
+            <div class="form-card">
+                <form method="POST" enctype="multipart/form-data" class="reclamation-form-ar">
+                    <div class="form-card-header">
+                        <h2>شكاية جديدة</h2>
+                        <p>جميع الحقول المشار إليها بعلامة <span class="req-star">*</span> إجبارية</p>
+                    </div>
+
+                    <div class="form-progress">
+                        <div class="form-progress-bar progress-ar"></div>
+                    </div>
+
+                    <div class="form-body">
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-num-badge">1</div>
+                                <div class="section-header-text">
+                                    <strong>المعلومات الشخصية</strong>
+                                    <span>معلوماتكم للتواصل وتتبع الطلب</span>
+                                </div>
+                            </div>
+
+                            <div class="field-grid">
+                                <div class="field">
+                                    <label for="nom-ar">النسب <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                                        <input type="text" id="nom-ar" name="nom" placeholder="أدخلوا النسب" required autocomplete="family-name">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="prenom-ar">الاسم <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+                                        <input type="text" id="prenom-ar" name="prenom" placeholder="أدخلوا الاسم" required autocomplete="given-name">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="cin-ar">رقم البطاقة الوطنية <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/></svg></span>
+                                        <input type="text" id="cin-ar" name="cin" placeholder="مثال: AB123456" required style="text-transform:uppercase;" dir="ltr">
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="telephone-ar">الهاتف</label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.8 19.8 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.8 19.8 0 012.08 4.18 2 2 0 014.06 2h3a2 2 0 012 1.72c.12.9.33 1.77.62 2.61a2 2 0 01-.45 2.11L8 9.67a16 16 0 006.33 6.33l1.23-1.23a2 2 0 012.11-.45c.84.29 1.71.5 2.61.62A2 2 0 0122 16.92z"/></svg></span>
+                                        <input type="tel" id="telephone-ar" name="telephone" placeholder="06 XX XX XX XX" autocomplete="tel" dir="ltr">
+                                    </div>
+                                </div>
+
+                                <div class="field field-span">
+                                    <label for="email-ar">البريد الإلكتروني</label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+                                        <input type="email" id="email-ar" name="email" placeholder="votre@email.com" autocomplete="email" dir="ltr">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-num-badge" style="background:#1a56db;">2</div>
+                                <div class="section-header-text">
+                                    <strong>تفاصيل الشكاية</strong>
+                                    <span>حددوا المكان ووصفوا المشكل بدقة</span>
+                                </div>
+                            </div>
+
+                            <div class="field-grid">
+                                <div class="field field-span">
+                                    <label for="zone-ar">المنطقة / الحي <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+                                        <input type="text" id="zone-ar" name="zone" placeholder="مثال: حي النخيل، بئر الرامي، المدينة..." required>
+                                    </div>
+                                </div>
+
+                                <div class="field field-span">
+                                    <label for="objet-ar">موضوع الشكاية <span class="req-star">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="iicon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg></span>
+                                        <input type="text" id="objet-ar" name="objet" placeholder="مثال: طريق متضررة أمام المدرسة" required>
+                                    </div>
+                                </div>
+
+                                <div class="field field-span">
+                                    <label for="description-ar">وصف مفصل <span class="req-star">*</span></label>
+                                    <div class="textarea-wrap">
+                                        <textarea id="description-ar" name="description" rows="5" placeholder="صفوا المشكل بدقة: المكان، درجة الخطورة، منذ متى بدأ المشكل، وتأثيره على المواطنين..." required></textarea>
+                                        <div class="char-counter"><span class="char-count-ar">0</span> / 1000</div>
+                                    </div>
+                                    <div class="field-hint">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                        كلما كان الوصف دقيقاً، كانت معالجة الشكاية أسرع وأكثر فعالية.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <div class="form-section">
+                            <div class="section-header">
+                                <div class="section-num-badge" style="background:#64748b;">3</div>
+                                <div class="section-header-text">
+                                    <strong>وثيقة أو صورة داعمة <span class="optional-pill">اختياري</span></strong>
+                                    <span>صورة أو ملف يوضح المشكل المبلغ عنه</span>
+                                </div>
+                            </div>
+
+                            <div class="upload-zone upload-zone-ar">
+                                <input type="file" name="fichier" accept="image/*,.pdf">
+                                <div class="upload-content-ar">
+                                    <div class="upload-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></div>
+                                    <div class="upload-text">اسحبوا الملف هنا أو <span>اضغطوا للاختيار</span></div>
+                                    <div class="upload-hint">صور JPG أو PNG أو PDF — الحجم الأقصى: 5 Mo</div>
+                                </div>
+                                <div class="upload-preview upload-preview-ar">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                    <span class="file-name-ar"></span>
+                                    <button type="button" class="remove-btn remove-file-ar">✕</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <a href="/" class="btn-cancel">إلغاء</a>
+                        <button type="submit" class="btn-submit">
+                            <span class="btn-text-ar" style="display:flex;align-items:center;gap:9px;">إرسال الشكاية</span>
+                            <span class="btn-loading-ar" style="display:none;align-items:center;gap:9px;">
+                                <svg class="spin" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" opacity=".25"/><path d="M21 12a9 9 0 00-9-9"/></svg>
+                                جار الإرسال...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+    <script>
+        function toggleLanguage(){
+            const fr = document.getElementById('content-fr');
+            const ar = document.getElementById('content-ar');
+            const isFr = fr.style.display !== 'none';
+
+            if(isFr){
+                fr.style.display = 'none';
+                ar.style.display = 'block';
+                document.documentElement.lang = 'ar';
+                document.documentElement.dir = 'rtl';
+                document.body.classList.add('rtl-mode');
+                localStorage.setItem('deposerLang', 'ar');
+            }else{
+                fr.style.display = 'block';
+                ar.style.display = 'none';
+                document.documentElement.lang = 'fr';
+                document.documentElement.dir = 'ltr';
+                document.body.classList.remove('rtl-mode');
+                localStorage.setItem('deposerLang', 'fr');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+            const savedLang = localStorage.getItem('deposerLang') || 'fr';
+            if(savedLang === 'ar'){
+                document.getElementById('content-fr').style.display = 'none';
+                document.getElementById('content-ar').style.display = 'block';
+                document.documentElement.lang = 'ar';
+                document.documentElement.dir = 'rtl';
+                document.body.classList.add('rtl-mode');
+            }
+        });
+    </script>
+    <script>
+        // ── Character counter ──
+        const textarea = document.getElementById('description');
+        const charCount = document.getElementById('charCount');
+        textarea.addEventListener('input', () => {
+            const len = textarea.value.length;
+            charCount.textContent = len;
+            charCount.style.color = len > 900 ? '#e74c3c' : (len > 700 ? '#f59e0b' : '#cbd5e1');
+        });
+
+        // ── Progress bar update ──
+        const progressBar = document.getElementById('progressBar');
+        const requiredFields = document.querySelectorAll('[required]');
+        function updateProgress() {
+            let filled = 0;
+            requiredFields.forEach(f => { if (f.value.trim()) filled++; });
+            const pct = Math.round((filled / requiredFields.length) * 100);
+            progressBar.style.width = pct + '%';
+        }
+        requiredFields.forEach(f => f.addEventListener('input', updateProgress));
+
+        // ── CIN uppercase ──
+        document.getElementById('cin').addEventListener('input', function() {
+            this.value = this.value.toUpperCase();
+        });
+
+        // ── Upload drag & drop ──
+        const uploadZone  = document.getElementById('uploadZone');
+        const fileInput   = document.getElementById('fichier');
+        const uploadContent = document.getElementById('uploadContent');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const fileNameEl  = document.getElementById('fileName');
+        const removeBtn   = document.getElementById('removeFile');
+
+        uploadZone.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadZone.classList.add('drag-over');
+        });
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) showFile(file);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) showFile(fileInput.files[0]);
+        });
+
+        function showFile(file) {
+            fileNameEl.textContent = file.name;
+            uploadContent.style.display = 'none';
+            uploadPreview.style.display = 'flex';
+        }
+
+        removeBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            e.preventDefault();
+            fileInput.value = '';
+            uploadContent.style.display = 'block';
+            uploadPreview.style.display = 'none';
+        });
+
+        // ── Submit animation ──
+        document.getElementById('reclamationForm').addEventListener('submit', () => {
+            document.getElementById('btnText').style.display = 'none';
+            document.getElementById('btnLoading').style.display = 'flex';
+            document.getElementById('submitBtn').disabled = true;
+        });
+
+        // ── Sidebar steps activation on scroll ──
+        function updateSteps() {
+    const activeContent =
+        document.getElementById('content-ar').style.display === 'block'
+            ? document.getElementById('content-ar')
+            : document.getElementById('content-fr');
+
+    const sections = activeContent.querySelectorAll('.form-section');
+    const steps = activeContent.querySelectorAll('.side-step');
+
+    sections.forEach((sec, i) => {
+        const rect = sec.getBoundingClientRect();
+
+        if (rect.top < window.innerHeight * 0.6 && steps[i]) {
+            steps.forEach(s => s.classList.remove('active'));
+            steps[Math.min(i, steps.length - 1)].classList.add('active');
+        }
+    });
+}
+
+window.addEventListener('scroll', updateSteps, { passive: true });
+    </script>
+
+
+    <script>
+        // ── Arabic form interactions ──
+        const arForm = document.querySelector('.reclamation-form-ar');
+        if (arForm) {
+            const textareaAr = arForm.querySelector('#description-ar');
+            const charCountAr = arForm.querySelector('.char-count-ar');
+            textareaAr.addEventListener('input', () => {
+                const len = textareaAr.value.length;
+                charCountAr.textContent = len;
+                charCountAr.style.color = len > 900 ? '#e74c3c' : (len > 700 ? '#f59e0b' : '#cbd5e1');
+            });
+
+            const progressAr = arForm.querySelector('.progress-ar');
+            const requiredAr = arForm.querySelectorAll('[required]');
+            function updateProgressAr() {
+                let filled = 0;
+                requiredAr.forEach(f => { if (f.value.trim()) filled++; });
+                progressAr.style.width = Math.round((filled / requiredAr.length) * 100) + '%';
+            }
+            requiredAr.forEach(f => f.addEventListener('input', updateProgressAr));
+
+            arForm.querySelector('#cin-ar').addEventListener('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+
+            const uploadZoneAr = arForm.querySelector('.upload-zone-ar');
+            const fileInputAr = uploadZoneAr.querySelector('input[type="file"]');
+            const uploadContentAr = arForm.querySelector('.upload-content-ar');
+            const uploadPreviewAr = arForm.querySelector('.upload-preview-ar');
+            const fileNameAr = arForm.querySelector('.file-name-ar');
+            const removeFileAr = arForm.querySelector('.remove-file-ar');
+
+            uploadZoneAr.addEventListener('dragover', e => {
+                e.preventDefault();
+                uploadZoneAr.classList.add('drag-over');
+            });
+            uploadZoneAr.addEventListener('dragleave', () => uploadZoneAr.classList.remove('drag-over'));
+            uploadZoneAr.addEventListener('drop', e => {
+                e.preventDefault();
+                uploadZoneAr.classList.remove('drag-over');
+                if (e.dataTransfer.files[0]) showFileAr(e.dataTransfer.files[0]);
+            });
+            fileInputAr.addEventListener('change', () => {
+                if (fileInputAr.files[0]) showFileAr(fileInputAr.files[0]);
+            });
+            function showFileAr(file){
+                fileNameAr.textContent = file.name;
+                uploadContentAr.style.display = 'none';
+                uploadPreviewAr.style.display = 'flex';
+            }
+            removeFileAr.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                fileInputAr.value = '';
+                uploadContentAr.style.display = 'block';
+                uploadPreviewAr.style.display = 'none';
+            });
+
+            arForm.addEventListener('submit', () => {
+                arForm.querySelector('.btn-text-ar').style.display = 'none';
+                arForm.querySelector('.btn-loading-ar').style.display = 'flex';
+                arForm.querySelector('.btn-submit').disabled = true;
+            });
+        }
+    </script>
+</body>
+</html>

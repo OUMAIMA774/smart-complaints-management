@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réclamation enregistrée — {{ code_reclamation }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #15803d;
+      --green-dark:  #14532d;
+      --green-light: #dcfce7;
+      --green-mid:   #22c55e;
+      --navy:        #0c1a2e;
+      --slate:       #1e293b;
+      --muted:       #64748b;
+      --border:      #e2e8f0;
+      --bg:          #f8fafc;
+      --red-ma:      #c0392b;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--slate);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── MOROCCAN STRIPE ── */
+    .ma-divider {
+      height: 5px;
+      background: linear-gradient(90deg, var(--red-ma) 33.3%, white 33.3%, white 66.6%, var(--green) 66.6%);
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      background: white;
+      border-bottom: 3px solid var(--green);
+      padding: 0 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    .nav-brand {
+      display: flex; align-items: center; gap: 18px;
+      padding: 13px 0; text-decoration: none;
+    }
+
+    .nav-crest {
+      width: 54px; height: 54px;
+      background: white; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+      flex-shrink: 0; padding: 3px;
+    }
+
+    .nav-crest img { width: 44px; height: 44px; object-fit: contain; }
+
+    .nav-commune {
+      font-family: 'Fraunces', serif;
+      font-size: 1.08rem; font-weight: 800;
+      color: var(--navy); letter-spacing: -0.3px;
+    }
+
+    .nav-region { font-size: 0.71rem; color: var(--muted); font-weight: 400; }
+
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: 9px;
+      font-size: 0.85rem; font-weight: 600;
+      text-decoration: none; transition: all 0.2s;
+      border: 1.5px solid var(--border); color: var(--slate);
+      background: transparent;
+    }
+
+    .nav-btn:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .nav-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── PAGE CENTER ── */
+    .page-wrap {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .confirm-box {
+      width: 100%; max-width: 560px;
+    }
+
+    /* ── ICÔNE SUCCÈS ANIMÉE ── */
+    .success-icon-wrap {
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .success-ring {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: var(--green-light);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    .success-ring::before {
+      content: '';
+      position: absolute; inset: -6px;
+      border-radius: 50%;
+      border: 2px solid var(--green-mid);
+      opacity: 0;
+      animation: ring-expand 0.6s ease 0.3s forwards;
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    @keyframes ring-expand {
+      from { inset: -2px; opacity: 0.6; }
+      to   { inset: -10px; opacity: 0; }
+    }
+
+    .success-ring svg {
+      width: 40px; height: 40px;
+      stroke: var(--green); fill: none;
+      stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+      animation: draw-check 0.4s ease 0.2s both;
+    }
+
+    @keyframes draw-check {
+      from { stroke-dasharray: 60; stroke-dashoffset: 60; }
+      to   { stroke-dasharray: 60; stroke-dashoffset: 0; }
+    }
+
+    /* ── TITRE ── */
+    .confirm-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.75rem; font-weight: 900;
+      color: var(--navy); text-align: center;
+      letter-spacing: -0.5px; margin-bottom: 8px;
+      animation: fade-up 0.4s ease 0.2s both;
+    }
+
+    .confirm-sub {
+      font-size: 0.9rem; color: var(--muted);
+      text-align: center; line-height: 1.7;
+      margin-bottom: 2rem;
+      animation: fade-up 0.4s ease 0.3s both;
+    }
+
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── CODE CARD ── */
+    .code-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      animation: fade-up 0.4s ease 0.4s both;
+    }
+
+    .code-card-top {
+      background: linear-gradient(135deg, var(--navy) 0%, #0f2744 60%, #143d25 100%);
+      padding: 1.5rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .code-card-label {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 8px;
+    }
+
+    .code-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.6rem; font-weight: 600;
+      color: white; letter-spacing: 1px;
+    }
+
+    .code-copy-btn {
+      display: flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.8);
+      padding: 8px 14px; border-radius: 9px;
+      font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.2s; white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .code-copy-btn:hover { background: rgba(255,255,255,0.18); color: white; }
+    .code-copy-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .code-card-bottom {
+      padding: 1rem 2rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .code-card-bottom svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 2; flex-shrink: 0; stroke-linecap: round; stroke-linejoin: round; }
+    .code-card-bottom p { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+    .code-card-bottom strong { color: var(--slate); }
+
+    /* ── INFO STEPS ── */
+    .info-steps {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+      animation: fade-up 0.4s ease 0.5s both;
+    }
+
+    .info-steps-title {
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 1.1rem;
+    }
+
+    .step-line {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-line:last-child { border-bottom: none; padding-bottom: 0; }
+    .step-line:first-of-type { padding-top: 0; }
+
+    .step-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--green-light);
+      color: var(--green-dark);
+      font-size: 0.75rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    .step-line-text { font-size: 0.85rem; color: var(--slate); line-height: 1.6; }
+    .step-line-text strong { font-weight: 600; color: var(--navy); }
+
+    /* ── ACTIONS ── */
+    .actions {
+      display: flex; flex-direction: column; gap: 10px;
+      animation: fade-up 0.4s ease 0.6s both;
+    }
+
+    .btn-primary {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 14px 24px; border-radius: 11px;
+      background: var(--green); color: white;
+      font-family: inherit; font-size: 0.95rem; font-weight: 700;
+      text-decoration: none; border: none; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(21,128,61,0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 6px 22px rgba(21,128,61,0.45); }
+    .btn-primary svg { width: 17px; height: 17px; stroke: white; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .btn-secondary {
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      padding: 13px 24px; border-radius: 11px;
+      background: transparent; color: var(--slate);
+      font-family: inherit; font-size: 0.92rem; font-weight: 600;
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover { border-color: var(--green); color: var(--green); background: var(--green-light); }
+    .btn-secondary svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── TOAST COPIÉ ── */
+    .toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: var(--navy); color: white;
+      padding: 10px 20px; border-radius: 50px;
+      font-size: 0.85rem; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+      opacity: 0; transition: all 0.3s; pointer-events: none;
+      white-space: nowrap; z-index: 999;
+    }
+
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast svg { width: 15px; height: 15px; stroke: var(--green-mid); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: white;
+      border-top: 1px solid var(--border);
+      padding: 1rem 3.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    footer p { font-size: 0.78rem; color: var(--muted); }
+
+    @media (max-width: 640px) {
+      .navbar { padding: 0 1rem; }
+      footer  { padding: 1rem; flex-direction: column; gap: 4px; text-align: center; }
+      .code-value { font-size: 1.25rem; }
+      .code-card-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+    }
+    /* =========================
+   MULTILINGUE
+========================= */
+
+#content-ar{
+    display:none;
+}
+
+.lang-switch{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+
+    padding:9px 18px;
+    border-radius:9px;
+
+    border:1.5px solid var(--border);
+    background:white;
+
+    cursor:pointer;
+
+    font-size:0.85rem;
+    font-weight:600;
+
+    transition:.2s;
+}
+
+.lang-switch:hover{
+    border-color:var(--green);
+    color:var(--green);
+    background:var(--green-light);
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+/* RTL */
+
+.rtl-mode{
+    direction:rtl;
+}
+
+.rtl-mode .navbar{
+    flex-direction:row-reverse;
+}
+
+.rtl-mode .nav-brand{
+    flex-direction:row-reverse;
+    text-align:right;
+}
+
+.rtl-mode .confirm-box,
+.rtl-mode .confirm-title,
+.rtl-mode .confirm-sub{
+    text-align:center;
+}
+
+.rtl-mode footer{
+    direction:rtl;
+}
+
+.rtl-mode .actions{
+    direction:rtl;
+}
+  </style>
+</head>
+<body>
+<div id="content-fr">
+  <div class="ma-divider"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="/" class="nav-brand">
+      <div class="nav-crest">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo Commune de Kénitra" />
+      </div>
+      <div>
+        <div class="nav-commune">Commune de Kénitra</div>
+        <div class="nav-region">Région Rabat-Salé-Kénitra — Maroc 🇲🇦</div>
+      </div>
+    </a>
+    <div class="nav-actions">
+
+    <button
+        type="button"
+        class="lang-switch"
+        onclick="toggleLanguage()">
+        العربية
+    </button>
+
+    <a href="/suivi" class="nav-btn">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Suivre une réclamation
+    </a>
+
+</div>
+  </nav>
+
+  <!-- CONTENU -->
+  <div class="page-wrap">
+    <div class="confirm-box">
+
+      <!-- ICÔNE SUCCÈS -->
+      <div class="success-icon-wrap">
+        <div class="success-ring">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+
+      <!-- TITRE -->
+      <h1 class="confirm-title">Réclamation enregistrée !</h1>
+      <p class="confirm-sub">
+        Votre réclamation a bien été reçue et transmise à la division compétente.<br>
+        Conservez votre code de suivi pour consulter l'état de votre demande.
+      </p>
+
+      <!-- CODE DE SUIVI -->
+      <div class="code-card">
+        <div class="code-card-top">
+          <div>
+            <div class="code-card-label">Votre code de suivi</div>
+            <div class="code-value" id="code-display">{{ code_reclamation }}</div>
+          </div>
+          <button class="code-copy-btn" onclick="copierCode()">
+            <svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Copier
+          </button>
+        </div>
+        <div class="code-card-bottom">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <p>Notez ce code ou prenez une capture d'écran. <strong>Il est nécessaire pour suivre votre réclamation.</strong></p>
+        </div>
+      </div>
+
+      <!-- PROCHAINES ÉTAPES -->
+      
+      <!-- BOUTONS -->
+      <div class="actions">
+        <a href="/suivi" class="btn-primary">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Suivre ma réclamation maintenant
+        </a>
+        <a href="/deposer" class="btn-secondary">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Déposer une autre réclamation
+        </a>
+        <a href="/" class="btn-secondary">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Retour à l'accueil
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 <strong>Commune de Kénitra</strong> — Plateforme de réclamations citoyennes</p>
+    <p>Région Rabat-Salé-Kénitra — Maroc</p>
+  </footer>
+
+  <div class="ma-divider"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+    Code copié dans le presse-papiers
+  </div>
+
+  <script>
+    function copierCode() {
+      const code = document.getElementById('code-display').textContent.trim();
+      navigator.clipboard.writeText(code).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      });
+    }
+  </script>
+</div>
+<div id="content-ar">
+
+  <div class="ma-divider"></div>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="/" class="nav-brand">
+      <div class="nav-crest">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="شعار جماعة القنيطرة" />
+      </div>
+
+      <div>
+        <div class="nav-commune">جماعة القنيطرة</div>
+        <div class="nav-region">جهة الرباط سلا القنيطرة — المغرب 🇲🇦</div>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+
+      <button
+        type="button"
+        class="lang-switch"
+        onclick="toggleLanguage()">
+        Français
+      </button>
+
+      <a href="/suivi" class="nav-btn">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        تتبع الشكاية
+      </a>
+
+    </div>
+  </nav>
+
+  <!-- CONTENU -->
+  <div class="page-wrap">
+    <div class="confirm-box">
+
+      <!-- ICÔNE SUCCÈS -->
+      <div class="success-icon-wrap">
+        <div class="success-ring">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- TITRE -->
+      <h1 class="confirm-title">
+        تم تسجيل الشكاية بنجاح !
+      </h1>
+
+      <p class="confirm-sub">
+        تم التوصل بشكايتكم وإحالتها إلى القسم المختص.<br>
+        يرجى الاحتفاظ برمز التتبع للاطلاع على حالة الطلب لاحقاً.
+      </p>
+
+      <!-- CODE -->
+      <div class="code-card">
+
+        <div class="code-card-top">
+
+          <div>
+            <div class="code-card-label">
+              رمز التتبع الخاص بكم
+            </div>
+
+            <div class="code-value" id="code-display-ar">
+              {{ code_reclamation }}
+            </div>
+          </div>
+
+          <button
+            class="code-copy-btn"
+            onclick="copierCodeAr()">
+
+            <svg viewBox="0 0 24 24">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+            </svg>
+
+            نسخ
+          </button>
+
+        </div>
+
+        <div class="code-card-bottom">
+
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+
+          <p>
+            احتفظوا بهذا الرمز أو التقطوا صورة للشاشة.
+            <strong>
+              هذا الرمز ضروري لتتبع الشكاية.
+            </strong>
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="actions">
+
+        <a href="/suivi" class="btn-primary">
+
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+
+          تتبع الشكاية الآن
+
+        </a>
+
+        <a href="/deposer" class="btn-secondary">
+
+          <svg viewBox="0 0 24 24">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+
+          إيداع شكاية أخرى
+
+        </a>
+
+        <a href="/" class="btn-secondary">
+
+          <svg viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+
+          العودة إلى الصفحة الرئيسية
+
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>
+      © 2026 <strong>جماعة القنيطرة</strong> — منصة شكايات المواطنين
+    </p>
+
+    <p>
+      جهة الرباط سلا القنيطرة — المغرب
+    </p>
+  </footer>
+
+  <div class="ma-divider"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast-ar">
+
+    <svg viewBox="0 0 24 24">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+
+    تم نسخ الرمز بنجاح
+
+  </div>
+
+</div>
+<script>
+
+function toggleLanguage(){
+
+    const fr = document.getElementById('content-fr');
+    const ar = document.getElementById('content-ar');
+
+    if(fr.style.display !== 'none'){
+
+        fr.style.display = 'none';
+        ar.style.display = 'block';
+
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+
+        document.body.classList.add('rtl-mode');
+
+        localStorage.setItem('confirmationLang','ar');
+
+    }else{
+
+        fr.style.display = 'block';
+        ar.style.display = 'none';
+
+        document.documentElement.lang = 'fr';
+        document.documentElement.dir = 'ltr';
+
+        document.body.classList.remove('rtl-mode');
+
+        localStorage.setItem('confirmationLang','fr');
+    }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+
+    const lang =
+        localStorage.getItem('confirmationLang')
+        || 'fr';
+
+    if(lang === 'ar'){
+
+        document.getElementById('content-fr').style.display='none';
+        document.getElementById('content-ar').style.display='block';
+
+        document.documentElement.lang='ar';
+        document.documentElement.dir='rtl';
+
+        document.body.classList.add('rtl-mode');
+    }
+});
+function copierCodeAr() {
+    const code = document.getElementById('code-display-ar').textContent.trim();
+
+    navigator.clipboard.writeText(code).then(() => {
+        const toast = document.getElementById('toast-ar');
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2500);
+    });
+}
+</script>
+</body>
+</html>

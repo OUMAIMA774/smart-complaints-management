@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Réclamations – Admin Kénitra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --g900:#0a3d20;--g800:#14532d;--g700:#15803d;--g600:#16a34a;
+  --g500:#22c55e;--g400:#4ade80;--g200:#bbf7d0;--g100:#dcfce7;--g50:#f0fdf4;
+  --white:#fff;--bg:#f2f5f2;--border:#dde8d8;
+  --s900:#0f172a;--s800:#1e293b;--s600:#475569;--s400:#94a3b8;--s200:#e2e8f0;--s100:#f1f5f9;
+  --rose:#f43f5e;--rose-light:#fff1f3;--rose-bg:#fee2e2;
+  --amber:#f59e0b;--amber-light:#fef3c7;
+  --blue:#3b82f6;--blue-light:#eff6ff;
+  --violet:#7c3aed;--violet-light:#ede9fe;
+  --cyan:#06b6d4;--cyan-light:#ecfeff;
+  --sidebar-w:264px;
+  --topbar-h:64px;
+  --radius:14px;
+  --shadow:0 4px 24px rgba(10,61,32,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--s800);
+  display:flex;
+  min-height:100vh;
+  overflow-x:auto;
+}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;background:var(--g900);
+  position:fixed;left:0;top:0;bottom:0;
+  display:flex;flex-direction:column;z-index:100;
+  overflow:hidden;
+}
+.sidebar::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,222,128,.13) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sidebar::after{
+  content:'';position:absolute;bottom:-80px;left:-40px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(22,163,74,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sidebar-logo{
+  padding:24px 22px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav-crest{width:42px;height:42px;flex-shrink:0;}
+.logo-title{font-size:13px;font-weight:700;color:white;letter-spacing:-.2px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.sidebar-section{
+  padding:20px 18px 6px;
+  font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.22);
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 14px;margin:2px 10px;border-radius:11px;
+  color:rgba(255,255,255,.55);text-decoration:none;
+  font-size:13.5px;font-weight:500;transition:all .18s;
+  position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-item.active{
+  background:rgba(74,222,128,.12);color:var(--g400);
+  border:1px solid rgba(74,222,128,.22);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--g400);border-radius:0 3px 3px 0;
+}
+.nav-icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
+.nav-badge{
+  margin-left:auto;background:rgba(244,63,94,.25);color:#fca5a5;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;
+}
+.sidebar-bottom{
+  margin-top:auto;padding:14px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.user-block{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:rgba(255,255,255,.06);
+  border-radius:12px;border:1px solid rgba(255,255,255,.08);
+}
+.user-avatar{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--g600),var(--g400));
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:white;flex-shrink:0;
+}
+.user-name{font-size:12.5px;font-weight:600;color:white}
+.user-role{font-size:11px;color:rgba(255,255,255,.35)}
+.logout-btn{
+  margin-left:auto;width:30px;height:30px;border-radius:8px;
+  background:rgba(244,63,94,.15);color:var(--rose);
+  display:flex;align-items:center;justify-content:center;text-decoration:none;
+  transition:.15s;flex-shrink:0;
+}
+.logout-btn:hover{background:rgba(244,63,94,.25)}
+.logout-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── MAIN ── */
+.main{
+  margin-left:var(--sidebar-w);
+  width:calc(100% - var(--sidebar-w));
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar-h);background:white;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:16px;
+  position:sticky;top:0;z-index:50;
+}
+.topbar-title{flex:1}
+.topbar-title h1{font-family:'Fraunces',serif;font-size:19px;color:var(--g800);font-weight:800;letter-spacing:-.3px}
+.topbar-title span{font-size:12.5px;color:var(--s400);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.live-badge{
+  display:flex;align-items:center;gap:7px;
+  background:var(--g50);border:1px solid var(--g200);
+  padding:6px 14px;border-radius:999px;
+  font-size:12px;font-weight:600;color:var(--g700);
+}
+.live-dot{width:7px;height:7px;background:var(--g500);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+.topbar-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--s400);font-weight:500;background:var(--s100);padding:6px 12px;border-radius:8px;}
+
+/* ── CONTENT ── */
+.content{padding:20px 28px 48px;flex:1}
+
+/* ── FLASH ── */
+.flash{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:12px;margin-bottom:18px;
+  font-size:13.5px;font-weight:500;
+  animation:slideDown .3s ease;
+}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.flash.success{background:var(--g50);border:1px solid var(--g200);color:var(--g800)}
+.flash.error{background:var(--rose-light);border:1px solid #fecdd3;color:#9f1239}
+.flash svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0;stroke-linecap:round;stroke-linejoin:round}
+.flash-close{margin-left:auto;cursor:pointer;opacity:.5}
+.flash-close:hover{opacity:1}
+
+/* ── KPI GRID — compact 5 colonnes ── */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+.kpi{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:14px 16px 12px;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi::after{
+  content:'';position:absolute;bottom:-16px;right:-16px;
+  width:64px;height:64px;border-radius:50%;opacity:.06;
+}
+.kpi.total::after{background:var(--g600)}
+.kpi.nouvelles::after{background:var(--blue)}
+.kpi.en-cours::after{background:var(--amber)}
+.kpi.repondues::after{background:var(--g400)}
+.kpi.cloturees::after{background:var(--cyan)}
+
+.kpi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.kpi-icon{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.kpi-icon svg{width:16px;height:16px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kpi.total .kpi-icon{background:#f0fdf4;} .kpi.total .kpi-icon svg{stroke:var(--g700)}
+.kpi.nouvelles .kpi-icon{background:var(--blue-light);} .kpi.nouvelles .kpi-icon svg{stroke:var(--blue)}
+.kpi.en-cours .kpi-icon{background:var(--amber-light);} .kpi.en-cours .kpi-icon svg{stroke:var(--amber)}
+.kpi.repondues .kpi-icon{background:var(--g50);} .kpi.repondues .kpi-icon svg{stroke:var(--g600)}
+.kpi.cloturees .kpi-icon{background:var(--cyan-light);} .kpi.cloturees .kpi-icon svg{stroke:var(--cyan)}
+
+.kpi-trend{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px;}
+.kpi.total .kpi-trend{background:var(--g50);color:var(--g700)}
+.kpi.nouvelles .kpi-trend{background:var(--blue-light);color:var(--blue)}
+.kpi.en-cours .kpi-trend{background:var(--amber-light);color:#92400e}
+.kpi.repondues .kpi-trend{background:var(--g50);color:var(--g700)}
+.kpi.cloturees .kpi-trend{background:var(--cyan-light);color:#0e7490}
+
+.kpi-val{font-family:'Fraunces',serif;font-size:28px;font-weight:800;line-height:1;margin-bottom:3px}
+.kpi.total .kpi-val{color:var(--g800)}
+.kpi.nouvelles .kpi-val{color:var(--blue)}
+.kpi.en-cours .kpi-val{color:var(--amber)}
+.kpi.repondues .kpi-val{color:var(--g600)}
+.kpi.cloturees .kpi-val{color:var(--cyan)}
+.kpi-lbl{font-size:11px;color:var(--s400);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.kpi-bar{height:3px;background:var(--border);border-radius:2px;margin-top:12px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.kpi.total .kpi-bar-fill{background:var(--g500)}
+.kpi.nouvelles .kpi-bar-fill{background:var(--blue)}
+.kpi.en-cours .kpi-bar-fill{background:var(--amber)}
+.kpi.repondues .kpi-bar-fill{background:var(--g400)}
+.kpi.cloturees .kpi-bar-fill{background:var(--cyan)}
+
+/* ── TOOLBAR ── */
+.toolbar{
+  background:white;border:1px solid var(--border);
+  border-radius:var(--radius);padding:12px 16px;
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.toolbar form{display:flex;align-items:center;gap:10px;flex:1;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--s400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+.search-wrap input{
+  width:100%;padding:8px 12px 8px 34px;
+  border:1px solid var(--border);border-radius:9px;
+  font-family:inherit;font-size:13px;background:var(--bg);color:var(--s800);outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.search-wrap input:focus{border-color:var(--g600);box-shadow:0 0 0 3px rgba(22,163,74,.1)}
+.search-wrap input::placeholder{color:var(--s400)}
+select.filter-sel{
+  padding:8px 12px;border:1px solid var(--border);border-radius:9px;
+  font-family:inherit;font-size:12.5px;background:white;color:var(--s800);outline:none;cursor:pointer;
+  transition:border-color .15s;
+}
+select.filter-sel:focus{border-color:var(--g600)}
+.btn-filter{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:9px;border:1px solid var(--border);
+  background:white;color:var(--s600);font-family:inherit;font-size:12.5px;
+  font-weight:500;cursor:pointer;transition:all .15s;
+}
+.btn-filter:hover{border-color:var(--g600);color:var(--g700);background:var(--g50)}
+.btn-filter svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-reset{
+  padding:8px 12px;border-radius:9px;border:none;
+  background:none;color:var(--s400);font-family:inherit;font-size:12.5px;
+  cursor:pointer;transition:color .15s;text-decoration:none;display:inline-flex;align-items:center;gap:5px;
+}
+.btn-reset:hover{color:var(--rose)}
+.btn-reset svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── TABLE CARD ── */
+.table-card{background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.table-header{
+  padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.table-title{font-size:12.5px;font-weight:700;color:var(--s600);text-transform:uppercase;letter-spacing:.08em}
+.table-count{font-size:12px;color:var(--s400);background:var(--s100);padding:3px 10px;border-radius:999px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{
+  background:var(--s100);padding:9px 14px;text-align:left;
+  color:var(--s400);font-size:10px;text-transform:uppercase;letter-spacing:.09em;
+  font-weight:700;white-space:nowrap;border-bottom:1px solid var(--border);
+}
+td{
+  padding:11px 14px;border-bottom:1px solid var(--border);
+  vertical-align:middle;transition:background .1s;
+}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:var(--g50)}
+
+/* code badge */
+.rec-code{
+  font-family:'JetBrains Mono',monospace;
+  background:var(--g50);color:var(--g800);border:1px solid var(--g200);
+  padding:3px 8px;border-radius:7px;font-weight:700;white-space:nowrap;font-size:11.5px;
+}
+
+/* division chip */
+.division-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:3px 9px;border-radius:7px;font-size:11.5px;font-weight:500;
+  background:var(--bg);border:1px solid var(--border);color:var(--s600);
+  white-space:nowrap;
+}
+.division-chip svg{width:10px;height:10px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.6}
+
+/* ── BADGES ── */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap;
+}
+.badge-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+/* statut */
+.st-nouvelle{background:var(--blue-light);color:#1d4ed8}
+.st-nouvelle .badge-dot{background:var(--blue)}
+.st-en_cours{background:var(--amber-light);color:#92400e}
+.st-en_cours .badge-dot{background:var(--amber)}
+.st-repondue{background:var(--g100);color:var(--g800)}
+.st-repondue .badge-dot{background:var(--g500)}
+.st-cloturee{background:var(--cyan-light);color:#0e7490}
+.st-cloturee .badge-dot{background:var(--cyan)}
+.st-transferee{background:var(--violet-light);color:var(--violet)}
+.st-transferee .badge-dot{background:var(--violet)}
+
+/* priorité */
+.pr-urgente{background:var(--rose-bg);color:#991b1b;border:1px solid #fecdd3}
+.pr-urgente .badge-dot{background:var(--rose)}
+.pr-elevee{background:#ffedd5;color:#9a3412;border:1px solid #fed7aa}
+.pr-elevee .badge-dot{background:#f97316}
+.pr-moyenne{background:var(--amber-light);color:#92400e;border:1px solid #fde68a}
+.pr-moyenne .badge-dot{background:var(--amber)}
+.pr-faible{background:var(--g50);color:var(--g800);border:1px solid var(--g200)}
+.pr-faible .badge-dot{background:var(--g500)}
+
+/* score bar */
+.score-wrap{display:flex;align-items:center;gap:7px}
+.score-track{width:46px;height:4px;background:var(--border);border-radius:999px;overflow:hidden}
+.score-fill{height:100%;border-radius:999px}
+.score-val{font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:var(--s600);min-width:24px}
+
+/* date cell */
+.date-main{font-size:12.5px;color:var(--s800);font-weight:500}
+.date-sub{font-size:11px;color:var(--s400);margin-top:1px}
+
+/* action btn */
+.action-btn{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:5px 11px;border-radius:7px;
+  background:var(--g50);border:1px solid var(--g200);
+  color:var(--g700);text-decoration:none;
+  font-size:11.5px;font-weight:600;white-space:nowrap;
+  transition:all .15s;
+}
+.action-btn:hover{background:var(--g100);border-color:var(--g400);transform:translateY(-1px)}
+.action-btn svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* empty state */
+.empty{padding:50px 20px;text-align:center}
+.empty-icon{font-size:36px;margin-bottom:12px;opacity:.4}
+.empty-msg{font-size:13.5px;color:var(--s400);font-weight:500}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1400px){
+  .kpi-grid{grid-template-columns:repeat(5,1fr)}
+}
+@media(max-width:1100px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0;width:100%}
+  .content{padding:16px}
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:400px){
+  .kpi-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="nav-crest">
+      <img src="{{ url_for('static', filename='images/logo.png') }}"
+           alt="Logo" style="width:42px;height:42px;object-fit:contain;">
+    </div>
+    <div>
+      <div class="logo-title">Kénitra Admin</div>
+      <div class="logo-sub">Gestion des réclamations</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Navigation</div>
+
+  <a href="/admin/dashboard" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Tableau de bord
+  </a>
+  <a href="/admin/utilisateurs" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Utilisateurs
+  </a>
+  <a href="/admin/reclamations" class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Réclamations
+    <span class="nav-badge">{{ stats.nouvelles or 0 }}</span>
+  </a>
+  <a href="/admin/divisions" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Divisions
+  </a>
+  <a href="/admin/exports" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exports
+  </a>
+
+  <div class="sidebar-bottom">
+    <div class="user-block">
+      <div class="user-avatar">{{ utilisateur.nom[0]|upper if utilisateur and utilisateur.nom else 'A' }}</div>
+      <div>
+        <div class="user-name">{{ utilisateur.nom if utilisateur else 'Administrateur' }}</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <a class="logout-btn" href="/logout" title="Déconnexion">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>Réclamations</h1>
+      <span>Supervision globale des demandes citoyennes</span>
+    </div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>En ligne</div>
+      <div class="topbar-time" id="current-time"></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}" id="flash-{{ loop.index }}">
+          {% if category == 'success' %}
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          {% else %}
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          {% endif %}
+          {{ message }}
+          <span class="flash-close" onclick="this.parentElement.remove()">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </span>
+        </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- KPI GRID — 5 cartes compactes sur une ligne -->
+    <div class="kpi-grid">
+      <div class="kpi total">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+          </div>
+          <span class="kpi-trend">Total</span>
+        </div>
+        <div class="kpi-val">{{ stats.total or 0 }}</div>
+        <div class="kpi-lbl">Réclamations</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+      </div>
+
+      <div class="kpi nouvelles">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <span class="kpi-trend">Nouvelles</span>
+        </div>
+        <div class="kpi-val">{{ stats.nouvelles or 0 }}</div>
+        <div class="kpi-lbl">À traiter</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:{% if stats.total %}{{ ((stats.nouvelles or 0) / stats.total * 100)|int }}%{% else %}0%{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi en-cours">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <span class="kpi-trend">En cours</span>
+        </div>
+        <div class="kpi-val">{{ stats.en_cours or 0 }}</div>
+        <div class="kpi-lbl">En traitement</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:{% if stats.total %}{{ ((stats.en_cours or 0) / stats.total * 100)|int }}%{% else %}0%{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi repondues">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <span class="kpi-trend">Répondues</span>
+        </div>
+        <div class="kpi-val">{{ stats.repondues or 0 }}</div>
+        <div class="kpi-lbl">Avec réponse</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:{% if stats.total %}{{ ((stats.repondues or 0) / stats.total * 100)|int }}%{% else %}0%{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi cloturees">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+          <span class="kpi-trend">Clôturées</span>
+        </div>
+        <div class="kpi-val">{{ stats.cloturees or 0 }}</div>
+        <div class="kpi-lbl">Fermées</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:{% if stats.total %}{{ ((stats.cloturees or 0) / stats.total * 100)|int }}%{% else %}0%{% endif %}"></div></div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR / FILTERS -->
+    <div class="toolbar">
+      <form method="GET" action="{{ url_for('admin_reclamations') }}">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" name="recherche" placeholder="Code, citoyen, zone ou objet…" value="{{ recherche or '' }}">
+        </div>
+
+        <select name="statut" class="filter-sel">
+          <option value="">Tous les statuts</option>
+          <option value="nouvelle" {% if statut == 'nouvelle' %}selected{% endif %}>Nouvelle</option>
+          <option value="en_cours" {% if statut == 'en_cours' %}selected{% endif %}>En cours</option>
+          <option value="repondue" {% if statut == 'repondue' %}selected{% endif %}>Répondue</option>
+          <option value="cloturee" {% if statut == 'cloturee' %}selected{% endif %}>Clôturée</option>
+          <option value="transferee" {% if statut == 'transferee' %}selected{% endif %}>Transférée</option>
+        </select>
+
+        <select name="priorite" class="filter-sel">
+          <option value="">Toutes priorités</option>
+          <option value="urgente" {% if priorite == 'urgente' %}selected{% endif %}>Urgente</option>
+          <option value="elevee" {% if priorite == 'elevee' %}selected{% endif %}>Élevée</option>
+          <option value="moyenne" {% if priorite == 'moyenne' %}selected{% endif %}>Moyenne</option>
+          <option value="faible" {% if priorite == 'faible' %}selected{% endif %}>Faible</option>
+        </select>
+
+        <select name="division_id" class="filter-sel">
+          <option value="">Toutes divisions</option>
+          {% for d in divisions %}
+            <option value="{{ d.id }}" {% if division_id and division_id|string == d.id|string %}selected{% endif %}>
+              {{ d.nom_division }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <button type="submit" class="btn-filter">
+          <svg viewBox="0 0 24 24"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          Filtrer
+        </button>
+        <a href="{{ url_for('admin_reclamations') }}" class="btn-reset">
+          <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+          Réinitialiser
+        </a>
+      </form>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-title">Liste des réclamations</span>
+        <span class="table-count">{{ reclamations|length }} résultat(s)</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Division</th>
+              <th>Priorité</th>
+              <th>Statut</th>
+              <th>Score IA</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reclamations %}
+            <tr>
+              <!-- Code -->
+              <td>
+                <span class="rec-code">{{ r.code_reclamation }}</span>
+              </td>
+
+              <!-- Division -->
+              <td>
+                {% if r.nom_division %}
+                  <div class="division-chip">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    {{ r.nom_division }}
+                  </div>
+                {% else %}
+                  <span style="color:var(--s400);font-size:12px;">—</span>
+                {% endif %}
+              </td>
+
+              <!-- Priorité -->
+              <td>
+                <span class="badge pr-{{ r.priorite }}">
+                  <span class="badge-dot"></span>
+                  {{ r.priorite | capitalize }}
+                </span>
+              </td>
+
+              <!-- Statut -->
+              <td>
+                <span class="badge st-{{ r.statut }}">
+                  <span class="badge-dot"></span>
+                  {% if r.statut == 'nouvelle' %}Nouvelle
+                  {% elif r.statut == 'en_cours' %}En cours
+                  {% elif r.statut == 'repondue' %}Répondue
+                  {% elif r.statut == 'cloturee' %}Clôturée
+                  {% elif r.statut == 'transferee' %}Transférée
+                  {% else %}{{ r.statut }}{% endif %}
+                </span>
+              </td>
+
+              <!-- Score IA -->
+              <td>
+                <div class="score-wrap">
+                  <div class="score-track">
+                    <div class="score-fill"
+                      style="
+                        width:{{ r.score_priorite or 0 }}%;
+                        background:{% if r.score_priorite >= 70 %}#ef4444{% elif r.score_priorite >= 50 %}#f59e0b{% else %}#22c55e{% endif %};
+                      ">
+                    </div>
+                  </div>
+                  <span class="score-val">{{ r.score_priorite or 0 }}</span>
+                </div>
+              </td>
+
+              <!-- Date -->
+              <td>
+                <div class="date-main">{{ r.date_creation.strftime('%d/%m/%Y') if r.date_creation else '—' }}</div>
+                <div class="date-sub">{{ r.date_creation.strftime('%H:%M') if r.date_creation else '' }}</div>
+              </td>
+
+              <!-- Action -->
+              <td>
+                <a href="/admin/reclamation/{{ r.id }}" class="action-btn">
+                  <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  Voir
+                </a>
+              </td>
+            </tr>
+
+            {% else %}
+            <tr>
+              <td colspan="7">
+                <div class="empty">
+                  <div class="empty-icon">📋</div>
+                  <div class="empty-msg">Aucune réclamation trouvée pour ces critères.</div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Clock
+function updateTime(){
+  const now = new Date();
+  document.getElementById('current-time').textContent =
+    now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+updateTime(); setInterval(updateTime,1000);
+
+// Auto-dismiss flash after 5s
+document.querySelectorAll('.flash').forEach(el=>{
+  setTimeout(()=>{ el.style.transition='opacity .4s'; el.style.opacity='0'; setTimeout(()=>el.remove(),400) }, 5000)
+})
+</script>
+</body>
+</html>

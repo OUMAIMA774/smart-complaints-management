@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ reclamation.code_reclamation }} – Détail – Admin Kénitra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --g900:#0a3d20;--g800:#14532d;--g700:#15803d;--g600:#16a34a;
+  --g500:#22c55e;--g400:#4ade80;--g200:#bbf7d0;--g100:#dcfce7;--g50:#f0fdf4;
+  --white:#fff;--bg:#f2f5f2;--border:#dde8d8;
+  --s900:#0f172a;--s800:#1e293b;--s600:#475569;--s400:#94a3b8;--s200:#e2e8f0;--s100:#f1f5f9;
+  --rose:#f43f5e;--rose-light:#fff1f3;--rose-bg:#fee2e2;
+  --amber:#f59e0b;--amber-light:#fef3c7;
+  --blue:#3b82f6;--blue-light:#eff6ff;
+  --violet:#7c3aed;--violet-light:#ede9fe;
+  --cyan:#06b6d4;--cyan-light:#ecfeff;
+  --orange:#f97316;--orange-light:#fff7ed;
+  --sidebar-w:264px;
+  --topbar-h:64px;
+  --radius:14px;
+  --shadow:0 4px 24px rgba(10,61,32,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--s800);display:flex;min-height:100vh;overflow-x:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;background:var(--g900);
+  position:fixed;left:0;top:0;bottom:0;
+  display:flex;flex-direction:column;z-index:100;overflow:hidden;
+}
+.sidebar::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,222,128,.13) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sidebar::after{
+  content:'';position:absolute;bottom:-80px;left:-40px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(22,163,74,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sidebar-logo{
+  padding:24px 22px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav-crest{width:42px;height:42px;flex-shrink:0;}
+.logo-title{font-size:13px;font-weight:700;color:white;letter-spacing:-.2px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.sidebar-section{
+  padding:20px 18px 6px;
+  font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.22);
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 14px;margin:2px 10px;border-radius:11px;
+  color:rgba(255,255,255,.55);text-decoration:none;
+  font-size:13.5px;font-weight:500;transition:all .18s;
+  position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-item.active{
+  background:rgba(74,222,128,.12);color:var(--g400);
+  border:1px solid rgba(74,222,128,.22);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--g400);border-radius:0 3px 3px 0;
+}
+.nav-icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
+.nav-badge{
+  margin-left:auto;background:rgba(244,63,94,.25);color:#fca5a5;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;
+}
+.sidebar-bottom{
+  margin-top:auto;padding:14px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+.user-block{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:rgba(255,255,255,.06);
+  border-radius:12px;border:1px solid rgba(255,255,255,.08);
+}
+.user-avatar{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--g600),var(--g400));
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:white;flex-shrink:0;
+}
+.user-name{font-size:12.5px;font-weight:600;color:white}
+.user-role{font-size:11px;color:rgba(255,255,255,.35)}
+.logout-btn{
+  margin-left:auto;width:30px;height:30px;border-radius:8px;
+  background:rgba(244,63,94,.15);color:var(--rose);
+  display:flex;align-items:center;justify-content:center;text-decoration:none;
+  transition:.15s;flex-shrink:0;
+}
+.logout-btn:hover{background:rgba(244,63,94,.25)}
+.logout-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar-h);background:white;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:12px;
+  position:sticky;top:0;z-index:50;
+}
+.topbar-back{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 14px;border-radius:10px;border:1px solid var(--border);
+  background:white;color:var(--s600);font-family:inherit;font-size:13px;
+  font-weight:500;cursor:pointer;text-decoration:none;transition:all .15s;flex-shrink:0;
+}
+.topbar-back:hover{border-color:var(--g600);color:var(--g700);background:var(--g50)}
+.topbar-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.topbar-breadcrumb{
+  display:flex;align-items:center;gap:6px;flex:1;
+  font-size:13px;color:var(--s400);
+}
+.topbar-breadcrumb a{color:var(--s400);text-decoration:none;transition:color .15s}
+.topbar-breadcrumb a:hover{color:var(--g700)}
+.topbar-breadcrumb .sep{color:var(--border)}
+.topbar-breadcrumb .current{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  color:var(--g700);font-weight:600;
+  background:var(--g50);border:1px solid var(--g200);
+  padding:3px 10px;border-radius:7px;
+}
+/* badge "lecture seule" dans la topbar */
+.readonly-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:999px;
+  background:var(--s100);border:1px solid var(--s200);
+  font-size:11.5px;font-weight:600;color:var(--s400);
+  flex-shrink:0;
+}
+.readonly-badge svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.live-badge{
+  display:flex;align-items:center;gap:7px;
+  background:var(--g50);border:1px solid var(--g200);
+  padding:6px 14px;border-radius:999px;
+  font-size:12px;font-weight:600;color:var(--g700);
+}
+.live-dot{width:7px;height:7px;background:var(--g500);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+.topbar-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--s400);font-weight:500;background:var(--s100);padding:6px 12px;border-radius:8px;}
+
+/* ── CONTENT ── */
+.content{padding:24px 28px 48px;flex:1}
+
+/* ── HERO STRIP ── */
+.hero-strip{
+  background:linear-gradient(135deg,var(--g900) 0%,#0f3320 60%,#0d2e1c 100%);
+  border-radius:var(--radius);padding:26px 28px;margin-bottom:22px;
+  display:flex;align-items:center;gap:20px;
+  position:relative;overflow:hidden;
+}
+.hero-strip::before{
+  content:'';position:absolute;top:-40px;right:80px;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,222,128,.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-strip::after{
+  content:'';position:absolute;bottom:-60px;right:-30px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(22,163,74,.07) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-code{
+  font-family:'JetBrains Mono',monospace;
+  background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.25);
+  color:var(--g400);padding:8px 16px;border-radius:10px;
+  font-size:14px;font-weight:600;flex-shrink:0;white-space:nowrap;
+}
+.hero-divider{width:1px;height:36px;background:rgba(255,255,255,.12);flex-shrink:0}
+.hero-text h2{
+  font-family:'Fraunces',serif;font-size:20px;font-weight:800;
+  color:white;letter-spacing:-.3px;margin-bottom:4px;
+}
+.hero-text p{font-size:13px;color:rgba(255,255,255,.45)}
+.hero-badges{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap}
+
+/* ── KPI ROW ── */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}
+.kpi-mini{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;display:flex;align-items:center;gap:14px;
+  transition:transform .2s,box-shadow .2s;
+}
+.kpi-mini:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi-mini-icon{
+  width:42px;height:42px;border-radius:11px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.kpi-mini-icon svg{width:20px;height:20px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kpi-mini-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--s400);margin-bottom:4px}
+.kpi-mini-val{font-family:'Fraunces',serif;font-size:22px;font-weight:800;line-height:1}
+.score-bar-wrap{display:flex;align-items:center;gap:10px;margin-top:6px}
+.score-track-lg{flex:1;height:6px;background:var(--border);border-radius:999px;overflow:hidden}
+.score-fill-lg{height:100%;border-radius:999px;transition:width 1.2s ease}
+
+/* ── LAYOUT ── */
+.detail-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+
+/* ── CARD ── */
+.card{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow);margin-bottom:18px;
+}
+.card:last-child{margin-bottom:0}
+.card-head{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.card-head-icon{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.card-head-icon svg{width:16px;height:16px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card-title{font-size:13px;font-weight:700;color:var(--s800);letter-spacing:-.1px}
+.card-body{padding:20px}
+
+/* ── INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.info-box{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:10px;padding:14px;
+}
+.info-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--s400);margin-bottom:6px}
+.info-val{font-size:13.5px;font-weight:600;color:var(--s800)}
+.info-val.mono{font-family:'JetBrains Mono',monospace;font-size:13px}
+
+/* description block */
+.description-block{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:10px;padding:18px;
+  border-left:3px solid var(--g500);
+  line-height:1.8;font-size:14px;color:var(--s800);
+}
+
+/* file attach */
+.attach-link{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 14px;border-radius:9px;
+  background:var(--blue-light);border:1px solid #bfdbfe;
+  color:var(--blue);font-size:13px;font-weight:600;
+  text-decoration:none;transition:all .15s;
+}
+.attach-link:hover{background:#dbeafe}
+.attach-link svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── INFO BANNER (remplace les alertes d'action) ── */
+.info-banner{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;border-radius:10px;
+  font-size:13.5px;line-height:1.6;
+  background:var(--s100);border:1px solid var(--s200);color:var(--s600);
+}
+.info-banner svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+
+/* statut spéciaux */
+.alert-cyan{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;border-radius:10px;
+  background:var(--cyan-light);border:1px solid #a5f3fc;color:#0e7490;
+  font-size:13.5px;line-height:1.6;
+}
+.alert-cyan svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin-top:2px}
+
+/* ── RESPONSE CARDS (lecture seule) ── */
+.response-item{
+  background:var(--g50);border:1px solid var(--g200);
+  border-radius:10px;padding:16px;margin-bottom:12px;
+  border-left:3px solid var(--g500);
+}
+.response-item:last-child{margin-bottom:0}
+.response-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;
+}
+.response-author{display:flex;align-items:center;gap:8px;}
+.response-avatar{
+  width:28px;height:28px;border-radius:8px;
+  background:linear-gradient(135deg,var(--g700),var(--g500));
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:white;flex-shrink:0;
+}
+.response-name{font-size:13px;font-weight:600;color:var(--s800)}
+.response-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--s400)}
+.response-text{font-size:13.5px;line-height:1.7;color:var(--s800)}
+.response-attach{
+  margin-top:10px;display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:600;color:var(--blue);text-decoration:none;
+}
+.response-attach svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.empty-response{
+  padding:32px;text-align:center;color:var(--s400);font-size:13.5px;
+}
+.empty-response svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.3;display:block;margin:0 auto 10px}
+
+/* ── CITIZEN CARD ── */
+.citizen-sticky{position:sticky;top:calc(var(--topbar-h) + 16px)}
+.citizen-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.citizen-item:last-child{border-bottom:none}
+.citizen-item-icon{
+  width:32px;height:32px;border-radius:9px;background:var(--bg);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.citizen-item-icon svg{width:14px;height:14px;stroke:var(--s400);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.citizen-item-lbl{font-size:11px;color:var(--s400);margin-bottom:2px}
+.citizen-item-val{font-size:13.5px;font-weight:600;color:var(--s800)}
+.citizen-avatar-lg{
+  width:54px;height:54px;border-radius:14px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--s600),var(--s400));
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:800;color:white;
+}
+
+/* ── TIMELINE ── */
+.timeline{list-style:none;padding-left:0}
+.timeline li{display:flex;gap:12px;padding-bottom:18px;position:relative;}
+.timeline li:last-child{padding-bottom:0}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.tl-dot{
+  width:12px;height:12px;border-radius:50%;
+  background:var(--g500);border:2px solid white;
+  box-shadow:0 0 0 2px var(--g500);
+  flex-shrink:0;margin-top:3px;
+}
+.tl-line{
+  flex:1;width:2px;background:linear-gradient(to bottom,var(--g200),transparent);
+  margin-top:4px;min-height:14px;
+}
+.timeline li:last-child .tl-line{display:none}
+.tl-action{font-size:13.5px;font-weight:600;color:var(--s800);line-height:1.4}
+.tl-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--s400);margin-top:3px}
+
+/* ── BADGES ── */
+.badge{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.st-nouvelle{background:var(--blue-light);color:#1d4ed8}
+.st-nouvelle .badge-dot{background:var(--blue)}
+.st-en_cours{background:var(--amber-light);color:#92400e}
+.st-en_cours .badge-dot{background:var(--amber)}
+.st-repondue{background:var(--g100);color:var(--g800)}
+.st-repondue .badge-dot{background:var(--g500)}
+.st-cloturee{background:var(--cyan-light);color:#0e7490}
+.st-cloturee .badge-dot{background:var(--cyan)}
+.st-transferee{background:var(--violet-light);color:var(--violet)}
+.st-transferee .badge-dot{background:var(--violet)}
+.pr-urgente{background:var(--rose-bg);color:#991b1b;border:1px solid #fecdd3}
+.pr-urgente .badge-dot{background:var(--rose)}
+.pr-elevee{background:#ffedd5;color:#9a3412;border:1px solid #fed7aa}
+.pr-elevee .badge-dot{background:var(--orange)}
+.pr-moyenne{background:var(--amber-light);color:#92400e;border:1px solid #fde68a}
+.pr-moyenne .badge-dot{background:var(--amber)}
+.pr-faible{background:var(--g50);color:var(--g800);border:1px solid var(--g200)}
+.pr-faible .badge-dot{background:var(--g500)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.detail-layout{grid-template-columns:1fr}}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .content{padding:16px}
+  .citizen-sticky{position:static}
+}
+@media(max-width:560px){.kpi-row{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="nav-crest">
+      <img src="{{ url_for('static', filename='images/logo.png') }}"
+           alt="Logo" style="width:42px;height:42px;object-fit:contain;">
+    </div>
+    <div>
+      <div class="logo-title">Kénitra Admin</div>
+      <div class="logo-sub">Gestion des réclamations</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Navigation</div>
+
+  <a href="/admin/dashboard" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Tableau de bord
+  </a>
+  <a href="/admin/utilisateurs" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Utilisateurs
+  </a>
+  <a href="/admin/reclamations" class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Réclamations
+  </a>
+  <a href="/admin/divisions" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Divisions
+  </a>
+  <a href="/admin/exports" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exports
+  </a>
+
+  <div class="sidebar-bottom">
+    <div class="user-block">
+      <div class="user-avatar">{{ utilisateur.nom[0]|upper if utilisateur and utilisateur.nom else 'A' }}</div>
+      <div>
+        <div class="user-name">{{ utilisateur.nom if utilisateur else 'Administrateur' }}</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <a class="logout-btn" href="/logout" title="Déconnexion">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <a href="/admin/reclamations" class="topbar-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Retour
+    </a>
+    <div class="topbar-breadcrumb">
+      <a href="/admin/reclamations">Réclamations</a>
+      <span class="sep">›</span>
+      <span class="current">{{ reclamation.code_reclamation }}</span>
+    </div>
+    <div class="topbar-right">
+      <!-- indicateur lecture seule -->
+      
+      <div class="live-badge"><div class="live-dot"></div>En ligne</div>
+      <div class="topbar-time" id="current-time"></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- HERO STRIP -->
+    <div class="hero-strip">
+      <div class="hero-code">{{ reclamation.code_reclamation }}</div>
+      <div class="hero-divider"></div>
+      <div class="hero-text">
+        <h2>{{ reclamation.objet }}</h2>
+        <p>Zone {{ reclamation.zone }} &nbsp;·&nbsp; {{ reclamation.nom_division if reclamation.nom_division else 'Division non assignée' }} &nbsp;·&nbsp; Soumis le {{ reclamation.date_creation.strftime('%d/%m/%Y à %H:%M') if reclamation.date_creation else '—' }}</p>
+      </div>
+      <div class="hero-badges">
+        <span class="badge pr-{{ reclamation.priorite }}">
+          <span class="badge-dot"></span>
+          {{ reclamation.priorite | capitalize }}
+        </span>
+        <span class="badge st-{{ reclamation.statut }}">
+          <span class="badge-dot"></span>
+          {% if reclamation.statut == 'nouvelle' %}Nouvelle
+          {% elif reclamation.statut == 'en_cours' %}En cours
+          {% elif reclamation.statut == 'repondue' %}Répondue
+          {% elif reclamation.statut == 'cloturee' %}Clôturée
+          {% elif reclamation.statut == 'transferee' %}Transférée
+          {% else %}{{ reclamation.statut }}{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-mini">
+        <div class="kpi-mini-icon" style="background:{% if reclamation.score_priorite >= 70 %}#fee2e2{% elif reclamation.score_priorite >= 50 %}var(--amber-light){% else %}var(--g50){% endif %}">
+          <svg viewBox="0 0 24 24" style="stroke:{% if reclamation.score_priorite >= 70 %}#dc2626{% elif reclamation.score_priorite >= 50 %}var(--amber){% else %}var(--g600){% endif %}"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="kpi-mini-body">
+          <div class="kpi-mini-lbl">Score IA priorité</div>
+          <div class="kpi-mini-val" style="color:{% if reclamation.score_priorite >= 70 %}#dc2626{% elif reclamation.score_priorite >= 50 %}var(--amber){% else %}var(--g600){% endif %}">
+            {{ reclamation.score_priorite or 0 }}<span style="font-size:14px;font-weight:500;color:var(--s400)">/100</span>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-track-lg">
+              <div class="score-fill-lg" style="width:{{ reclamation.score_priorite or 0 }}%;background:{% if reclamation.score_priorite >= 70 %}#ef4444{% elif reclamation.score_priorite >= 50 %}#f59e0b{% else %}#22c55e{% endif %}"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-mini">
+        <div class="kpi-mini-icon" style="background:var(--s100)">
+          <svg viewBox="0 0 24 24" style="stroke:var(--s600)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="kpi-mini-body">
+          <div class="kpi-mini-lbl">Date de dépôt</div>
+          <div class="kpi-mini-val" style="color:var(--s800);font-size:17px">{{ reclamation.date_creation.strftime('%d/%m/%Y') if reclamation.date_creation else '—' }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--s400);margin-top:2px">{{ reclamation.date_creation.strftime('%H:%M') if reclamation.date_creation else '' }}</div>
+        </div>
+      </div>
+
+      <div class="kpi-mini">
+        <div class="kpi-mini-icon" style="background:var(--blue-light)">
+          <svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="kpi-mini-body">
+          <div class="kpi-mini-lbl">Division assignée</div>
+          <div class="kpi-mini-val" style="color:var(--blue);font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">{{ reclamation.nom_division if reclamation.nom_division else '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="detail-layout">
+
+      <!-- ── COLONNE GAUCHE ── -->
+      <div>
+
+        <!-- Informations de la réclamation -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--g50)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--g700)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+            </div>
+            <span class="card-title">Informations de la réclamation</span>
+          </div>
+          <div class="card-body">
+            <div class="info-grid" style="margin-bottom:16px">
+              <div class="info-box">
+                <div class="info-lbl">Objet</div>
+                <div class="info-val">{{ reclamation.objet }}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-lbl">Zone</div>
+                <div class="info-val">{{ reclamation.zone }}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-lbl">Division</div>
+                <div class="info-val">{{ reclamation.nom_division if reclamation.nom_division else '—' }}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-lbl">Date de création</div>
+                <div class="info-val mono">{{ reclamation.date_creation.strftime('%d/%m/%Y %H:%M') if reclamation.date_creation else '—' }}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-lbl">Catégorie IA</div>
+                <div class="info-val">{{ reclamation.categorie_predite if reclamation.categorie_predite else '—' }}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-lbl">Transférée</div>
+                <div class="info-val">{% if reclamation.est_transferee == 1 %}<span style="color:var(--violet);font-weight:700">Oui</span>{% else %}<span style="color:var(--s400)">Non</span>{% endif %}</div>
+              </div>
+            </div>
+
+            {% if reclamation.fichier_joint %}
+            <a href="/uploads/{{ reclamation.fichier_joint }}" target="_blank" class="attach-link">
+              <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+              Voir la pièce jointe
+            </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--s100)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--s600)"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+            </div>
+            <span class="card-title">Description complète</span>
+          </div>
+          <div class="card-body">
+            <div class="description-block">{{ reclamation.description }}</div>
+          </div>
+        </div>
+
+        <!-- Réponses envoyées (lecture seule) -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--blue-light)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </div>
+            <span class="card-title">Réponses de la division</span>
+            <span style="margin-left:auto;font-size:12px;color:var(--s400);background:var(--s100);padding:2px 9px;border-radius:999px">{{ reponses|length }}</span>
+          </div>
+          <div class="card-body">
+            {% if reponses %}
+              {% for rep in reponses %}
+              <div class="response-item">
+                <div class="response-meta">
+                  <div class="response-author">
+                    <div class="response-avatar">D</div>
+                    <span class="response-name">Division {{ reclamation.nom_division if reclamation.nom_division else '' }}</span>
+                  </div>
+                  <span class="response-date">{{ rep.date_reponse.strftime('%d/%m/%Y %H:%M') if rep.date_reponse else '—' }}</span>
+                </div>
+                <div class="response-text">{{ rep.message }}</div>
+                {% if rep.fichier_reponse %}
+                <a href="/uploads/{{ rep.fichier_reponse }}" target="_blank" class="response-attach">
+                  <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+                  Voir la pièce jointe
+                </a>
+                {% endif %}
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-response">
+                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                Aucune réponse envoyée par la division pour le moment.
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Statut clôturée (informatif uniquement) -->
+        {% if reclamation.statut == 'cloturee' %}
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--cyan-light)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--cyan)"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <span class="card-title">Réclamation clôturée</span>
+          </div>
+          <div class="card-body">
+            <div class="alert-cyan">
+              <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Cette réclamation a été traitée sur le terrain et clôturée officiellement par la division compétente.
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- ── COLONNE DROITE ── -->
+      <div class="citizen-sticky">
+
+        <!-- Citoyen -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--s100)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--s600)"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <span class="card-title">Citoyen</span>
+          </div>
+          <div class="card-body">
+            <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+              <div class="citizen-avatar-lg">{{ reclamation.nom[0]|upper if reclamation.nom else '?' }}</div>
+              <div>
+                <div style="font-size:16px;font-weight:700;color:var(--s800)">{{ reclamation.nom }} {{ reclamation.prenom }}</div>
+                <div style="font-size:12px;color:var(--s400);margin-top:2px">{{ reclamation.email if reclamation.email else '' }}</div>
+              </div>
+            </div>
+
+            <div class="citizen-item">
+              <div class="citizen-item-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div>
+                <div class="citizen-item-lbl">CIN</div>
+                <div class="citizen-item-val" style="font-family:'JetBrains Mono',monospace;font-size:13px">{{ reclamation.cin if reclamation.cin else '—' }}</div>
+              </div>
+            </div>
+
+            <div class="citizen-item">
+              <div class="citizen-item-icon">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.22 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <div>
+                <div class="citizen-item-lbl">Téléphone</div>
+                <div class="citizen-item-val">{{ reclamation.telephone if reclamation.telephone else '—' }}</div>
+              </div>
+            </div>
+
+            <div class="citizen-item">
+              <div class="citizen-item-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="citizen-item-lbl">Email</div>
+                <div class="citizen-item-val" style="font-size:13px;word-break:break-all">{{ reclamation.email if reclamation.email else '—' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historique -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--violet-light)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--violet)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <span class="card-title">Historique</span>
+          </div>
+          <div class="card-body">
+            <ul class="timeline">
+              {% for h in historique %}
+              <li>
+                <div class="tl-dot-wrap">
+                  <div class="tl-dot"></div>
+                  <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                  <div class="tl-action">{{ h.action }}</div>
+                  <div class="tl-date">{{ h.date_action.strftime('%d/%m/%Y %H:%M') if h.date_action else '—' }}</div>
+                </div>
+              </li>
+              {% else %}
+              <li>
+                <div class="tl-dot-wrap">
+                  <div class="tl-dot" style="background:var(--s200);box-shadow:0 0 0 2px var(--s200)"></div>
+                </div>
+                <div class="tl-content">
+                  <div class="tl-action" style="color:var(--s400)">Aucun historique disponible.</div>
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <!-- Note informative pour l'admin -->
+        <div class="card">
+          <div class="card-head">
+            <div class="card-head-icon" style="background:var(--s100)">
+              <svg viewBox="0 0 24 24" style="stroke:var(--s400)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            </div>
+            <span class="card-title" style="color:var(--s400)">Note superviseur</span>
+          </div>
+          <div class="card-body">
+            <div class="info-banner">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              En tant qu'administrateur, vous consultez cette réclamation en mode supervision. Le traitement et les réponses sont assurés par la division compétente.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function updateTime(){
+  const now = new Date();
+  document.getElementById('current-time').textContent =
+    now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+updateTime(); setInterval(updateTime,1000);
+</script>
+</body>
+</html>

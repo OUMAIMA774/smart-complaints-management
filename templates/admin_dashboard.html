@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard – Admin Kénitra</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,700;9..144,800;9..144,900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --g900:#0a3d20;--g800:#14532d;--g700:#15803d;--g600:#16a34a;
+  --g500:#22c55e;--g400:#4ade80;--g200:#bbf7d0;--g100:#dcfce7;--g50:#f0fdf4;
+  --white:#fff;--bg:#f2f5f2;--border:#dde8d8;
+  --s900:#0f172a;--s800:#1e293b;--s600:#475569;--s400:#94a3b8;--s200:#e2e8f0;--s100:#f1f5f9;
+  --rose:#f43f5e;--rose-light:#fff1f3;--rose-bg:#fee2e2;
+  --amber:#f59e0b;--amber-light:#fef3c7;
+  --blue:#3b82f6;--blue-light:#eff6ff;
+  --violet:#7c3aed;--violet-light:#ede9fe;
+  --cyan:#06b6d4;--cyan-light:#ecfeff;
+  --sidebar-w:264px;
+  --topbar-h:64px;
+  --radius:14px;
+  --shadow:0 4px 24px rgba(10,61,32,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--s800);
+  display:flex;
+  min-height:100vh;
+}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:var(--sidebar-w);min-height:100vh;background:var(--g900);
+  position:fixed;left:0;top:0;bottom:0;
+  display:flex;flex-direction:column;z-index:100;overflow:hidden;
+}
+.sidebar::before{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,222,128,.13) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sidebar::after{
+  content:'';position:absolute;bottom:-80px;left:-40px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(22,163,74,.08) 0%,transparent 70%);
+  pointer-events:none;
+}
+.sidebar-logo{
+  padding:24px 22px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.nav-crest{width:42px;height:42px;flex-shrink:0;}
+.logo-title{font-size:13px;font-weight:700;color:white;letter-spacing:-.2px}
+.logo-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.sidebar-section{
+  padding:20px 18px 6px;
+  font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,.22);
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;
+  padding:10px 14px;margin:2px 10px;border-radius:11px;
+  color:rgba(255,255,255,.55);text-decoration:none;
+  font-size:13.5px;font-weight:500;transition:all .18s;
+  position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.nav-item.active{
+  background:rgba(74,222,128,.12);color:var(--g400);
+  border:1px solid rgba(74,222,128,.22);
+}
+.nav-item.active::before{
+  content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);
+  width:3px;height:60%;background:var(--g400);border-radius:0 3px 3px 0;
+}
+.nav-icon{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.7}
+.nav-item.active .nav-icon,.nav-item:hover .nav-icon{opacity:1}
+.nav-badge{
+  margin-left:auto;background:rgba(244,63,94,.25);color:#fca5a5;
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;
+}
+.sidebar-bottom{margin-top:auto;padding:14px;border-top:1px solid rgba(255,255,255,.07);}
+.user-block{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;background:rgba(255,255,255,.06);
+  border-radius:12px;border:1px solid rgba(255,255,255,.08);
+}
+.user-avatar{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--g600),var(--g400));
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:white;flex-shrink:0;
+}
+.user-name{font-size:12.5px;font-weight:600;color:white}
+.user-role{font-size:11px;color:rgba(255,255,255,.35)}
+.logout-btn{
+  margin-left:auto;width:30px;height:30px;border-radius:8px;
+  background:rgba(244,63,94,.15);color:var(--rose);
+  display:flex;align-items:center;justify-content:center;text-decoration:none;
+  transition:.15s;flex-shrink:0;
+}
+.logout-btn:hover{background:rgba(244,63,94,.25)}
+.logout-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);width:calc(100% - var(--sidebar-w));min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{
+  height:var(--topbar-h);background:white;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;gap:16px;
+  position:sticky;top:0;z-index:50;
+}
+.topbar-title{flex:1}
+.topbar-title h1{font-family:'Fraunces',serif;font-size:19px;color:var(--g800);font-weight:800;letter-spacing:-.3px}
+.topbar-title span{font-size:12.5px;color:var(--s400);font-weight:400}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.live-badge{
+  display:flex;align-items:center;gap:7px;
+  background:var(--g50);border:1px solid var(--g200);
+  padding:6px 14px;border-radius:999px;
+  font-size:12px;font-weight:600;color:var(--g700);
+}
+.live-dot{width:7px;height:7px;background:var(--g500);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+.topbar-time{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--s400);font-weight:500;background:var(--s100);padding:6px 12px;border-radius:8px;}
+
+/* ── CONTENT ── */
+.content{padding:22px 28px 48px;flex:1}
+
+/* ── SECTION HEADER ── */
+.section-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:6px;}
+.section-hd-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--s400);white-space:nowrap;}
+.section-hd-line{flex:1;height:1px;background:var(--border);}
+
+/* ── KPI GRID — 6 cartes, 3 colonnes 2 lignes ── */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:12px;
+  margin-bottom:22px;
+}
+.kpi{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:16px 16px 13px;position:relative;overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.kpi::after{
+  content:'';position:absolute;bottom:-16px;right:-16px;
+  width:64px;height:64px;border-radius:50%;opacity:.06;
+}
+.kpi.k-green::after{background:var(--g600)}
+.kpi.k-cyan::after{background:var(--cyan)}
+.kpi.k-amber::after{background:var(--amber)}
+.kpi.k-blue::after{background:var(--blue)}
+.kpi.k-violet::after{background:var(--violet)}
+.kpi.k-rose::after{background:var(--rose)}
+
+.kpi-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.kpi-icon{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.kpi-icon svg{width:16px;height:16px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.kpi.k-green .kpi-icon{background:var(--g50)} .kpi.k-green .kpi-icon svg{stroke:var(--g700)}
+.kpi.k-cyan .kpi-icon{background:var(--cyan-light)} .kpi.k-cyan .kpi-icon svg{stroke:var(--cyan)}
+.kpi.k-amber .kpi-icon{background:var(--amber-light)} .kpi.k-amber .kpi-icon svg{stroke:var(--amber)}
+.kpi.k-blue .kpi-icon{background:var(--blue-light)} .kpi.k-blue .kpi-icon svg{stroke:var(--blue)}
+.kpi.k-violet .kpi-icon{background:var(--violet-light)} .kpi.k-violet .kpi-icon svg{stroke:var(--violet)}
+.kpi.k-rose .kpi-icon{background:var(--rose-light)} .kpi.k-rose .kpi-icon svg{stroke:var(--rose)}
+
+.kpi-val{font-family:'Fraunces',serif;font-size:28px;font-weight:800;line-height:1;margin-bottom:3px}
+.kpi.k-green .kpi-val{color:var(--g800)}
+.kpi.k-cyan .kpi-val{color:var(--cyan)}
+.kpi.k-amber .kpi-val{color:var(--amber)}
+.kpi.k-blue .kpi-val{color:var(--blue)}
+.kpi.k-violet .kpi-val{color:var(--violet)}
+.kpi.k-rose .kpi-val{color:var(--rose)}
+
+.kpi-lbl{font-size:11px;color:var(--s400);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.kpi-bar{height:3px;background:var(--border);border-radius:2px;margin-top:12px;overflow:hidden}
+.kpi-bar-fill{height:100%;border-radius:2px;transition:width 1.2s ease}
+.kpi.k-green .kpi-bar-fill{background:var(--g500)}
+.kpi.k-cyan .kpi-bar-fill{background:var(--cyan)}
+.kpi.k-amber .kpi-bar-fill{background:var(--amber)}
+.kpi.k-blue .kpi-bar-fill{background:var(--blue)}
+.kpi.k-violet .kpi-bar-fill{background:var(--violet)}
+.kpi.k-rose .kpi-bar-fill{background:var(--rose)}
+
+/* ── TAUX CARD ── */
+.taux-card{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 22px;margin-bottom:22px;
+  display:flex;align-items:center;gap:28px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.taux-card::before{
+  content:'';position:absolute;right:-30px;top:-30px;
+  width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,var(--g100) 0%,transparent 70%);
+  pointer-events:none;
+}
+.taux-left{flex:1}
+.taux-title{
+  font-family:'Fraunces',serif;font-size:14px;font-weight:700;
+  color:var(--g800);margin-bottom:10px;display:flex;align-items:center;gap:8px;
+}
+.taux-title svg{width:16px;height:16px;stroke:var(--g600);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.progress-track{background:var(--s100);border-radius:999px;height:10px;overflow:hidden;position:relative;}
+.progress-fill{
+  height:100%;border-radius:999px;
+  background:linear-gradient(90deg,var(--g800),var(--g500));
+  transition:width 1.5s cubic-bezier(.4,0,.2,1);
+  position:relative;width:0%;
+}
+.progress-fill::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:40px;
+  background:rgba(255,255,255,.25);animation:shimmer 2s infinite;
+}
+@keyframes shimmer{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+.taux-sub{font-size:12px;color:var(--s400);margin-top:8px}
+.taux-big{font-family:'Fraunces',serif;font-size:44px;font-weight:800;color:var(--g700);line-height:1}
+.taux-unit{font-size:20px;font-weight:600;color:var(--g500)}
+
+/* ── CHARTS ── */
+.charts-row{display:grid;gap:14px;margin-bottom:14px;}
+.charts-2{grid-template-columns:1.6fr 1fr}
+.charts-3{grid-template-columns:1fr 1fr 1fr}
+
+.chart-card{
+  background:white;border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px 20px;box-shadow:var(--shadow);
+}
+.chart-card-hd{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);
+}
+.chart-card-title{font-size:13px;font-weight:700;color:var(--s800)}
+.chip{font-size:10.5px;font-weight:600;padding:3px 9px;border-radius:999px;}
+.chip-green{background:var(--g50);color:var(--g700)}
+.chip-blue{background:var(--blue-light);color:#1d4ed8}
+.chip-amber{background:var(--amber-light);color:#92400e}
+.chip-violet{background:var(--violet-light);color:var(--violet)}
+.chip-cyan{background:var(--cyan-light);color:#0e7490}
+.chart-card canvas{width:100%!important;max-height:220px}
+
+/* ── TABLE CARD ── */
+.table-card{background:white;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.table-card-hd{
+  padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+.table-card-title{font-size:13px;font-weight:700;color:var(--s800)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{
+  background:var(--s100);padding:9px 14px;text-align:left;
+  color:var(--s400);font-size:10px;text-transform:uppercase;letter-spacing:.09em;
+  font-weight:700;white-space:nowrap;border-bottom:1px solid var(--border);
+}
+td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr{transition:background .12s}
+tbody tr:hover td{background:var(--g50)}
+
+.td-div{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--s800)}
+.div-dot{width:8px;height:8px;border-radius:50%;background:var(--g600);flex-shrink:0}
+.td-num{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--s800)}
+.td-cyan{color:var(--cyan);font-weight:600}
+.td-amber{color:var(--amber);font-weight:600}
+.td-blue{color:var(--blue);font-weight:600}
+.td-green{color:var(--g700);font-weight:700}
+
+.mini-bar{display:flex;align-items:center;gap:8px}
+.mini-track{width:70px;height:5px;background:var(--s200);border-radius:999px;overflow:hidden}
+.mini-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--g700),var(--g500));transition:width 1s ease;width:0%}
+.mini-val{font-size:11.5px;color:var(--s400)}
+
+.rate-badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700}
+.rate-h{background:var(--g100);color:var(--g800)}
+.rate-m{background:var(--amber-light);color:#92400e}
+.rate-l{background:var(--rose-bg);color:#991b1b}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1400px){.kpi-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1100px){
+  .charts-2,.charts-3{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0;width:100%}
+  .content{padding:16px}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:560px){.kpi-grid{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="nav-crest">
+      <img src="{{ url_for('static', filename='images/logo.png') }}"
+           alt="Logo" style="width:42px;height:42px;object-fit:contain;">
+    </div>
+    <div>
+      <div class="logo-title">Kénitra Admin</div>
+      <div class="logo-sub">Gestion des réclamations</div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">Navigation</div>
+
+  <a href="/admin/dashboard" class="nav-item active">
+    <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Tableau de bord
+  </a>
+  <a href="/admin/utilisateurs" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+    Utilisateurs
+  </a>
+  <a href="/admin/reclamations" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Réclamations
+    <span class="nav-badge">{{ stats.nouvelles or 0 }}</span>
+  </a>
+  <a href="/admin/divisions" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Divisions
+  </a>
+  <a href="/admin/exports" class="nav-item">
+    <svg class="nav-icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Exports
+  </a>
+
+  <div class="sidebar-bottom">
+    <div class="user-block">
+      <div class="user-avatar">{{ utilisateur.nom[0]|upper if utilisateur and utilisateur.nom else 'A' }}</div>
+      <div>
+        <div class="user-name">{{ utilisateur.nom if utilisateur else 'Administrateur' }}</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <a class="logout-btn" href="/logout" title="Déconnexion">
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-title">
+      <h1>Tableau de bord</h1>
+      <span>Supervision globale · Commune de Kénitra</span>
+    </div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>En ligne</div>
+      <div class="topbar-time" id="current-time"></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ── KPI ── -->
+    <div class="section-hd">
+      <span class="section-hd-label">Indicateurs clés</span>
+      <div class="section-hd-line"></div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi k-green">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+          </div>
+        </div>
+        <div class="kpi-val" data-target="{{ stats.total or 0 }}">0</div>
+        <div class="kpi-lbl">Total</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" style="width:100%"></div></div>
+      </div>
+
+      <div class="kpi k-cyan">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+        </div>
+        <div class="kpi-val" data-target="{{ stats.nouvelles or 0 }}">0</div>
+        <div class="kpi-lbl">Nouvelles</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" data-pct="{% if stats.total %}{{ ((stats.nouvelles or 0)/stats.total*100)|int }}{% else %}0{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi k-amber">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+        </div>
+        <div class="kpi-val" data-target="{{ stats.en_cours or 0 }}">0</div>
+        <div class="kpi-lbl">En cours</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" data-pct="{% if stats.total %}{{ ((stats.en_cours or 0)/stats.total*100)|int }}{% else %}0{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi k-blue">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+        </div>
+        <div class="kpi-val" data-target="{{ stats.repondues or 0 }}">0</div>
+        <div class="kpi-lbl">Répondues</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" data-pct="{% if stats.total %}{{ ((stats.repondues or 0)/stats.total*100)|int }}{% else %}0{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi k-violet">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          </div>
+        </div>
+        <div class="kpi-val" data-target="{{ stats.cloturees or 0 }}">0</div>
+        <div class="kpi-lbl">Clôturées</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" data-pct="{% if stats.total %}{{ ((stats.cloturees or 0)/stats.total*100)|int }}{% else %}0{% endif %}"></div></div>
+      </div>
+
+      <div class="kpi k-rose">
+        <div class="kpi-header">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+          </div>
+        </div>
+        <div class="kpi-val" data-target="{{ stats.transferees or 0 }}">0</div>
+        <div class="kpi-lbl">Transférées</div>
+        <div class="kpi-bar"><div class="kpi-bar-fill" data-pct="{% if stats.total %}{{ ((stats.transferees or 0)/stats.total*100)|int }}{% else %}0{% endif %}"></div></div>
+      </div>
+    </div>
+
+    <!-- ── TAUX CLÔTURE ── -->
+    <div class="taux-card">
+      <div class="taux-left">
+        <div class="taux-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Taux global de clôture
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="taux-sub">
+          {{ stats.cloturees or 0 }} clôturées &nbsp;·&nbsp; {{ stats.total or 0 }} réclamations &nbsp;·&nbsp; {{ stats_divisions|length }} divisions actives
+        </div>
+      </div>
+      <div>
+        <span class="taux-big">{{ taux_cloture }}</span><span class="taux-unit">%</span>
+      </div>
+    </div>
+
+    <!-- ── CHARTS LIGNE 1 ── -->
+    <div class="section-hd">
+      <span class="section-hd-label">Analyse par division</span>
+      <div class="section-hd-line"></div>
+    </div>
+
+    <div class="charts-row charts-2">
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <span class="chart-card-title">Statuts par division</span>
+          <span class="chip chip-green">Barres empilées</span>
+        </div>
+        <canvas id="chartStacked"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <span class="chart-card-title">Répartition globale</span>
+          <span class="chip chip-blue">Statuts</span>
+        </div>
+        <canvas id="chartDoughnut"></canvas>
+      </div>
+    </div>
+
+    <!-- ── CHARTS LIGNE 2 ── -->
+    <div class="charts-row charts-3" style="margin-bottom:22px">
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <span class="chart-card-title">Performance divisions</span>
+          <span class="chip chip-violet">Radar</span>
+        </div>
+        <canvas id="chartRadar"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <span class="chart-card-title">Volume par division</span>
+          <span class="chip chip-amber">Polaire</span>
+        </div>
+        <canvas id="chartPolar"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-hd">
+          <span class="chart-card-title">Tendance mensuelle</span>
+          <span class="chip chip-cyan">Courbe</span>
+        </div>
+        <canvas id="chartLine"></canvas>
+      </div>
+    </div>
+
+    <!-- ── TABLE PAR DIVISION ── -->
+    <div class="section-hd">
+      <span class="section-hd-label">Détail par division</span>
+      <div class="section-hd-line"></div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-card-hd">
+        <span class="table-card-title">Suivi complet par division</span>
+        <span class="chip chip-green">{{ stats_divisions|length }} divisions</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Division</th>
+              <th>Total</th>
+              <th>Nouvelles</th>
+              <th>En cours</th>
+              <th>Répondues</th>
+              <th>Clôturées</th>
+              <th>Progression</th>
+              <th>Taux</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for d in stats_divisions %}
+            {% set tot = d.total or 0 %}
+            {% set cl  = d.cloturees or 0 %}
+            {% set taux = ((cl / tot * 100)|round(0)|int) if tot > 0 else 0 %}
+            <tr>
+              <td>
+                <div class="td-div">
+                  <div class="div-dot"></div>
+                  {{ d.nom_division }}
+                </div>
+              </td>
+              <td class="td-num">{{ tot }}</td>
+              <td class="td-cyan">{{ d.nouvelles or 0 }}</td>
+              <td class="td-amber">{{ d.en_cours or 0 }}</td>
+              <td class="td-blue">{{ d.repondues or 0 }}</td>
+              <td class="td-green">{{ cl }}</td>
+              <td>
+                <div class="mini-bar">
+                  <div class="mini-track">
+                    <div class="mini-fill" data-w="{{ taux }}"></div>
+                  </div>
+                  <span class="mini-val">{{ taux }}%</span>
+                </div>
+              </td>
+              <td>
+                <span class="rate-badge {% if taux >= 70 %}rate-h{% elif taux >= 40 %}rate-m{% else %}rate-l{% endif %}">
+                  {{ taux }}%
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- JSON DATA -->
+<script type="application/json" id="d-labels">{{ labels_divisions | tojson }}</script>
+<script type="application/json" id="d-total">{{ data_total | tojson }}</script>
+<script type="application/json" id="d-stats">{{ stats | tojson }}</script>
+<script type="application/json" id="d-divs">{{ stats_divisions | tojson }}</script>
+<script type="application/json" id="d-taux">{{ taux_cloture | tojson }}</script>
+
+<script>
+/* ── CLOCK ── */
+function updateTime(){
+  document.getElementById('current-time').textContent =
+    new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+updateTime(); setInterval(updateTime,1000);
+
+/* ── DATA ── */
+const j = id => JSON.parse(document.getElementById(id).textContent);
+const labels    = j('d-labels');
+const dataTotal = j('d-total');
+const stats     = j('d-stats');
+const divs      = j('d-divs');
+const tauxGlob  = j('d-taux');
+
+/* ── COUNT-UP ── */
+function countUp(el, target, delay=0){
+  setTimeout(()=>{
+    const dur = 1000, start = performance.now();
+    const tick = t => {
+      const p = Math.min((t-start)/dur,1);
+      el.textContent = Math.round((1-Math.pow(1-p,3))*target);
+      if(p<1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, delay);
+}
+document.querySelectorAll('.kpi-val[data-target]').forEach((el,i)=>{
+  countUp(el, +el.dataset.target, i*80);
+});
+
+/* ── KPI BAR ANIMATION ── */
+setTimeout(()=>{
+  document.querySelectorAll('.kpi-bar-fill[data-pct]').forEach(el=>{
+    el.style.width = el.dataset.pct + '%';
+  });
+}, 300);
+
+/* ── PROGRESS BAR ── */
+setTimeout(()=>{
+  document.getElementById('progress-fill').style.width = tauxGlob + '%';
+}, 600);
+
+/* ── MINI BARS ── */
+setTimeout(()=>{
+  document.querySelectorAll('.mini-fill[data-w]').forEach(el=>{
+    el.style.width = el.dataset.w + '%';
+  });
+}, 900);
+
+/* ── CHART DEFAULTS ── */
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.font.family = 'DM Sans';
+Chart.defaults.font.size = 12;
+const grid = '#f1f5f9';
+const bd   = '#dde8d8';
+
+const P = {
+  green:'#15803d', cyan:'#0891b2', amber:'#d97706',
+  blue:'#1d4ed8', violet:'#7c3aed', rose:'#be123c',
+  teal:'#0d9488', lime:'#65a30d'
+};
+const COLORS = Object.values(P);
+
+/* ── STACKED BAR ── */
+new Chart(document.getElementById('chartStacked'),{
+  type:'bar',
+  data:{
+    labels,
+    datasets:[
+      {label:'Nouvelles', data:divs.map(d=>d.nouvelles||0), backgroundColor:P.cyan,   stack:'a', borderRadius:3, borderSkipped:false},
+      {label:'En cours',  data:divs.map(d=>d.en_cours||0),  backgroundColor:P.amber,  stack:'a', borderRadius:3, borderSkipped:false},
+      {label:'Répondues', data:divs.map(d=>d.repondues||0), backgroundColor:P.blue,   stack:'a', borderRadius:3, borderSkipped:false},
+      {label:'Clôturées', data:divs.map(d=>d.cloturees||0), backgroundColor:P.green,  stack:'a', borderRadius:3, borderSkipped:false},
+    ]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:14,usePointStyle:true,pointStyle:'rect'}}},
+    scales:{
+      x:{grid:{color:grid,lineWidth:.5},border:{color:bd},ticks:{maxRotation:30}},
+      y:{grid:{color:grid,lineWidth:.5},border:{color:bd},ticks:{stepSize:1}}
+    }
+  }
+});
+
+/* ── DOUGHNUT ── */
+new Chart(document.getElementById('chartDoughnut'),{
+  type:'doughnut',
+  data:{
+    labels:['Nouvelles','En cours','Répondues','Clôturées','Transférées'],
+    datasets:[{
+      data:[stats.nouvelles||0,stats.en_cours||0,stats.repondues||0,stats.cloturees||0,stats.transferees||0],
+      backgroundColor:[P.cyan,P.amber,P.blue,P.green,P.rose],
+      borderColor:'#ffffff',borderWidth:3,hoverOffset:8
+    }]
+  },
+  options:{
+    responsive:true, cutout:'68%',
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:12,usePointStyle:true,pointStyle:'rect'}}}
+  }
+});
+
+/* ── RADAR ── */
+new Chart(document.getElementById('chartRadar'),{
+  type:'radar',
+  data:{
+    labels,
+    datasets:[{
+      label:'Taux clôture',
+      data:divs.map(d=>d.total>0?Math.round(d.cloturees/d.total*100):0),
+      backgroundColor:'rgba(21,128,61,0.08)',
+      borderColor:P.green,
+      pointBackgroundColor:P.green,
+      pointBorderColor:'#fff',pointBorderWidth:2,pointRadius:4,borderWidth:2
+    }]
+  },
+  options:{
+    responsive:true,
+    scales:{r:{min:0,max:100,ticks:{stepSize:25,backdropColor:'transparent',font:{size:10}},grid:{color:grid},angleLines:{color:bd}}},
+    plugins:{legend:{display:false}}
+  }
+});
+
+/* ── POLAR ── */
+new Chart(document.getElementById('chartPolar'),{
+  type:'polarArea',
+  data:{
+    labels,
+    datasets:[{
+      data:dataTotal,
+      backgroundColor:COLORS.map(c=>c+'88'),
+      borderColor:COLORS,borderWidth:1.5
+    }]
+  },
+  options:{
+    responsive:true,
+    scales:{r:{ticks:{backdropColor:'transparent',font:{size:10}},grid:{color:grid}}},
+    plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,usePointStyle:true,pointStyle:'circle'}}}
+  }
+});
+
+/* ── LINE ── */
+const months=['Déc','Jan','Fév','Mar','Avr','Mai'];
+const total = stats.total||0;
+const trend = [.35,.45,.57,.69,.82,1].map(f=>Math.round(total*f));
+const ctx = document.getElementById('chartLine').getContext('2d');
+const grad = ctx.createLinearGradient(0,0,0,200);
+grad.addColorStop(0,'rgba(21,128,61,0.15)');
+grad.addColorStop(1,'rgba(21,128,61,0.01)');
+
+new Chart(ctx,{
+  type:'line',
+  data:{
+    labels:months,
+    datasets:[{
+      label:'Réclamations',
+      data:trend,
+      borderColor:P.green,backgroundColor:grad,
+      borderWidth:2.5,pointRadius:4,
+      pointBackgroundColor:P.green,pointBorderColor:'#fff',pointBorderWidth:2,
+      tension:0.4,fill:true
+    }]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:grid,lineWidth:.5},border:{color:bd}},
+      y:{grid:{color:grid,lineWidth:.5},border:{color:bd},ticks:{stepSize:1}}
+    }
+  }
+});
+</script>
+</body>
+</html>

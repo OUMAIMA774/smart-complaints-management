@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suivi de Réclamation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ef;
+      --card: #ffffff;
+      --border: #e0ddd6;
+      --text: #1a1916;
+      --muted: #7a7770;
+      --accent: #0f6e56;
+      --accent-light: #e1f5ee;
+      --danger: #a32d2d;
+      --danger-light: #fcebeb;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'Sora', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text);
+    }
+
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .logo-icon svg { width: 20px; height: 20px; stroke: white; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .logo-text { font-size: 15px; font-weight: 600; letter-spacing: -0.3px; }
+    .logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+    nav a { font-size: 13px; color: var(--muted); text-decoration: none; margin-left: 24px; transition: color .15s; }
+    nav a:hover { color: var(--text); }
+    nav a.active { color: var(--accent); font-weight: 500; }
+
+    .center-wrap {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .form-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%; max-width: 480px;
+    }
+
+    .form-box-icon {
+      width: 52px; height: 52px;
+      background: var(--accent-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .form-box-icon svg { width: 24px; height: 24px; stroke: var(--accent); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    .form-box h1 { font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 6px; letter-spacing: -0.3px; }
+
+    .subtitle { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 2rem; line-height: 1.6; }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+
+    label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    input[type="text"] {
+      height: 46px; padding: 0 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 14px;
+      color: var(--text); background: var(--bg);
+      outline: none; width: 100%;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15,110,86,.12); }
+    input[type="text"]::placeholder { color: var(--muted); opacity: .5; }
+
+    .btn-submit {
+      width: 100%; height: 46px;
+      background: var(--accent); color: white;
+      border: none; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 14px; font-weight: 500;
+      cursor: pointer; margin-top: 8px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .15s;
+    }
+
+    .btn-submit:hover { background: #0a5a44; }
+    .btn-submit svg { width: 16px; height: 16px; stroke: white; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .alert-error {
+      background: var(--danger-light); color: var(--danger);
+      border: 1px solid #f7c1c1; border-radius: var(--radius-sm);
+      padding: 10px 14px; font-size: 13px;
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 1.2rem;
+    }
+
+    .alert-error svg { width: 15px; height: 15px; stroke: var(--danger); fill: none; stroke-width: 2; flex-shrink: 0; }
+
+    .hint { text-align: center; font-size: 12px; color: var(--muted); margin-top: 1.2rem; }
+    .hint a { color: var(--accent); text-decoration: none; }
+    .hint a:hover { text-decoration: underline; }
+    /* LANG SWITCH */
+#content-ar{
+    display:none;
+}
+
+.lang-switch{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:8px 14px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+}
+
+.lang-switch:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+}
+
+.nav-actions{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+/* RTL */
+.rtl-mode{
+    direction:rtl;
+}
+
+.rtl-mode header{
+    direction:rtl;
+}
+
+.rtl-mode .logo{
+    flex-direction:row-reverse;
+}
+
+.rtl-mode nav{
+    direction:rtl;
+}
+
+.rtl-mode .form-box{
+    text-align:right;
+}
+
+.rtl-mode .form-group{
+    text-align:right;
+}
+
+.rtl-mode input{
+    text-align:right;
+}
+
+.rtl-mode .hint{
+    text-align:center;
+}
+  </style>
+</head>
+<body>
+<div id="content-fr">
+  <header>
+    <a href="/" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <div>
+        <div class="logo-text">Commune en ligne</div>
+        <div class="logo-sub">Gestion des réclamations</div>
+      </div>
+    </a>
+    <nav class="nav-actions">
+  <button type="button" class="lang-switch" onclick="toggleLanguage()">
+    العربية
+  </button>
+
+  <a href="/deposer">Déposer</a>
+  <a href="/suivi" class="active">Suivi</a>
+</nav>
+  </header>
+
+  <div class="center-wrap">
+    <div class="form-box">
+
+      <div class="form-box-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+
+      <h1>Suivre ma réclamation</h1>
+      <p class="subtitle">Entrez votre CIN et votre code de réclamation pour consulter l'état de votre demande.</p>
+
+      {% if error %}
+      <div class="alert-error">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <span>{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <form method="POST" action="/suivi">
+        <div class="form-group">
+          <label for="cin">Numéro CIN</label>
+          <input type="text" id="cin" name="cin" placeholder="Ex : BK123456" maxlength="12" required />
+        </div>
+        <div class="form-group">
+          <label for="code">Code de réclamation</label>
+          <input type="text" id="code" name="code" placeholder="Ex : REC-2026-00042"
+            style="font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.5px;" required />
+        </div>
+        <button type="submit" class="btn-submit">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Consulter ma réclamation
+        </button>
+      </form>
+
+      <p class="hint">Pas encore déposé ? <a href="/deposer">Déposer une réclamation</a></p>
+
+    </div>
+  </div>
+</div>
+<div id="content-ar">
+
+<header>
+    <a href="/" class="logo">
+        <div class="logo-icon">
+            <svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+        </div>
+        <div>
+            <div class="logo-text">الجماعة الرقمية</div>
+            <div class="logo-sub">منصة تدبير الشكايات</div>
+        </div>
+    </a>
+
+    <nav class="nav-actions">
+        <button type="button" class="lang-switch" onclick="toggleLanguage()">
+            Français
+        </button>
+
+        <a href="/deposer">إيداع شكاية</a>
+        <a href="/suivi" class="active">تتبع الشكاية</a>
+    </nav>
+</header>
+
+<div class="center-wrap">
+    <div class="form-box">
+
+        <div class="form-box-icon">
+            <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+        </div>
+
+        <h1>تتبع الشكاية</h1>
+
+        <p class="subtitle">
+            أدخلوا رقم البطاقة الوطنية ورمز الشكاية للاطلاع على حالة الطلب.
+        </p>
+
+        {% if error %}
+        <div class="alert-error">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/suivi">
+
+            <div class="form-group">
+                <label for="cin-ar">
+                    رقم البطاقة الوطنية
+                </label>
+
+                <input
+                    type="text"
+                    id="cin-ar"
+                    name="cin"
+                    placeholder="مثال : BK123456"
+                    maxlength="12"
+                    required
+                    dir="ltr">
+            </div>
+
+            <div class="form-group">
+                <label for="code-ar">
+                    رمز الشكاية
+                </label>
+
+                <input
+                    type="text"
+                    id="code-ar"
+                    name="code"
+                    placeholder="مثال : REC-2026-00042"
+                    style="font-family:'IBM Plex Mono', monospace; letter-spacing:0.5px;"
+                    required
+                    dir="ltr">
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <svg viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+
+                عرض حالة الشكاية
+            </button>
+
+        </form>
+
+        <p class="hint">
+            لم تقدموا شكاية بعد؟
+            <a href="/deposer">
+                إيداع شكاية جديدة
+            </a>
+        </p>
+
+    </div>
+</div>
+
+</div>
+<script>
+function toggleLanguage(){
+
+    const fr = document.getElementById('content-fr');
+    const ar = document.getElementById('content-ar');
+
+    const isFr = fr.style.display !== 'none';
+
+    if(isFr){
+
+        fr.style.display = 'none';
+        ar.style.display = 'block';
+
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+
+        document.body.classList.add('rtl-mode');
+
+        localStorage.setItem('suiviLang','ar');
+
+    }else{
+
+        fr.style.display = 'block';
+        ar.style.display = 'none';
+
+        document.documentElement.lang = 'fr';
+        document.documentElement.dir = 'ltr';
+
+        document.body.classList.remove('rtl-mode');
+
+        localStorage.setItem('suiviLang','fr');
+    }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+
+    const savedLang = localStorage.getItem('suiviLang') || 'fr';
+
+    if(savedLang === 'ar'){
+
+        document.getElementById('content-fr').style.display='none';
+        document.getElementById('content-ar').style.display='block';
+
+        document.documentElement.lang='ar';
+        document.documentElement.dir='rtl';
+
+        document.body.classList.add('rtl-mode');
+    }
+});
+</script>
+</body>
+</html>
