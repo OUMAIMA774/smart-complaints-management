@@ -813,12 +813,14 @@ def detail_reclamation(reclamation_id):
     connexion.close()
 
     return render_template(
-        "detail_reclamation.html",
-        reclamation=reclamation,
-        historique=historique,
-        reponses=reponses,
-        divisions=divisions
-    )
+    "detail_reclamation.html",
+    reclamation=reclamation,
+    historique=historique,
+    reponses=reponses,
+    divisions=divisions,
+    utilisateur=session
+)
+    
 
 @app.route("/repondre/<int:reclamation_id>", methods=["POST"])
 @login_required

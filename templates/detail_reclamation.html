@@ -429,7 +429,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--s800);dis
       <div class="user-avatar">{{ utilisateur.nom[0]|upper if utilisateur and utilisateur.nom else 'D' }}</div>
       <div>
         <div class="user-name">{{ utilisateur.nom if utilisateur else 'Agent' }}</div>
-        <div class="user-role">Agent division</div>
+        <div class="user-role">
+  {% if reclamation.nom_division %}
+    Chef {{ reclamation.nom_division }}
+  {% else %}
+    Chef de division
+  {% endif %}
+</div>
       </div>
       <a class="logout-btn" href="/logout" title="Déconnexion">
         <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
