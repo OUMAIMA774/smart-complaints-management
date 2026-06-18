@@ -12,6 +12,16 @@ import nltk
 from nltk.corpus import stopwords
 import pandas as pd
 from reportlab.lib.pagesizes import A4
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+    HRFlowable, Image as RLImage
+)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from reportlab.pdfgen import canvas
 from config import GEMINI_API_KEY
 import google.generativeai as genai
@@ -133,22 +143,6 @@ def preparer_texte_pour_ml(texte):
 @app.route("/")
 def index():
     return render_template("index.html")
-
-
-@app.route("/test-db")
-def test_db():
-    try:
-        connexion = get_db_connection()
-        cursor = connexion.cursor()
-        cursor.execute("SELECT DATABASE();")
-        db_name = cursor.fetchone()
-        cursor.close()
-        connexion.close()
-
-        return f"Connexion réussie à la base : {db_name[0]}"
-
-    except Exception as e:
-        return f"Erreur de connexion : {e}"
 
 
 def generer_code_reclamation():
@@ -700,46 +694,336 @@ def export_division_urgentes(division_id):
     )
 
 
+from reportlab.platypus import (
+    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
+    HRFlowable, Image as RLImage
+)
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib import colors
+from reportlab.lib.units import cm
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+ 
+ 
 @app.route("/exports/<int:division_id>/pdf")
 @login_required
 def export_division_pdf(division_id):
     if not verifier_acces_division(division_id):
         return "Accès interdit", 403
 
-    statut = request.args.get("statut", "")
+    statut   = request.args.get("statut", "")
     priorite = request.args.get("priorite", "")
 
     data = get_reclamations_export(division_id, statut, priorite)
 
-    buffer = io.BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=A4)
+    # ── Récupérer le nom de la division ──────────────────────
+    conn   = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT nom_division FROM divisions WHERE id = %s", (division_id,))
+    division = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    nom_division = division["nom_division"] if division else f"Division {division_id}"
 
-    # Police compatible avec l'arabe
+    # ── Enregistrement de la police arabe pour Platypus ──────
+    import os
     font_path = r"C:\Windows\Fonts\arial.ttf"
-    pdfmetrics.registerFont(TTFont("ArabicFont", font_path))
+    if os.path.exists(font_path):
+        pdfmetrics.registerFont(TTFont("ArabicFont", font_path))
+        arabic_font = "ArabicFont"
+    else:
+        arabic_font = "Helvetica"
 
-    pdf.setFont("ArabicFont", 15)
-    pdf.drawString(50, 800, "Rapport des réclamations - Division")
+    # ── Statistiques calculées depuis les données ────────────
+    total      = len(data)
+    nb_urgente = sum(1 for r in data if r["Priorité"] == "urgente")
+    nb_elevee  = sum(1 for r in data if r["Priorité"] == "elevee")
+    nb_moyenne = sum(1 for r in data if r["Priorité"] == "moyenne")
+    nb_faible  = sum(1 for r in data if r["Priorité"] == "faible")
 
-    pdf.setFont("ArabicFont", 10)
-    pdf.drawString(50, 775, f"Nombre total : {len(data)}")
+    nb_nouvelle  = sum(1 for r in data if r["Statut"] == "nouvelle")
+    nb_en_cours  = sum(1 for r in data if r["Statut"] == "en_cours")
+    nb_repondue  = sum(1 for r in data if r["Statut"] == "repondue")
+    nb_cloturee  = sum(1 for r in data if r["Statut"] == "cloturee")
+    taux_cloture = round(nb_cloturee / total * 100, 1) if total > 0 else 0
 
-    y = 745
+    # ── Graphique 1 : Répartition par priorité (camembert) ───
+    def make_pie(labels, values, title):
+        fig, ax = plt.subplots(figsize=(4, 3))
+        clean_labels = [l for l, v in zip(labels, values) if v > 0]
+        clean_values = [v for v in values if v > 0]
+        palette = ["#e74c3c", "#e67e22", "#3498db", "#2ecc71"][:len(clean_values)]
+        if clean_values:
+            ax.pie(clean_values, labels=clean_labels, autopct="%1.0f%%",
+                   colors=palette, startangle=90,
+                   textprops={"fontsize": 8})
+        ax.set_title(title, fontsize=9, fontweight="bold", pad=8)
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight", dpi=120)
+        plt.close(fig)
+        buf.seek(0)
+        return buf
 
-    for r in data:
-        if y < 80:
-            pdf.showPage()
-            pdf.setFont("ArabicFont", 10)
-            y = 800
+    # ── Graphique 2 : Répartition par statut (barres) ────────
+    def make_bar(labels, values, title, color="#2c7a3a"):
+        fig, ax = plt.subplots(figsize=(4, 3))
+        bars = ax.bar(labels, values, color=color, edgecolor="white", width=0.5)
+        for bar, val in zip(bars, values):
+            ax.text(bar.get_x() + bar.get_width() / 2,
+                    bar.get_height() + 0.1, str(val),
+                    ha="center", va="bottom", fontsize=8)
+        ax.set_title(title, fontsize=9, fontweight="bold")
+        ax.set_ylabel("Nombre", fontsize=8)
+        ax.tick_params(axis="x", labelsize=8)
+        ax.tick_params(axis="y", labelsize=8)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", bbox_inches="tight", dpi=120)
+        plt.close(fig)
+        buf.seek(0)
+        return buf
 
-        zone_pdf = prepare_arabic_text(r["Zone"])
+    pie_buf = make_pie(
+        ["Urgente", "Elevee", "Moyenne", "Faible"],
+        [nb_urgente, nb_elevee, nb_moyenne, nb_faible],
+        "Repartition par priorite"
+    )
+    bar_buf = make_bar(
+        ["Nouvelle", "En cours", "Repondue", "Cloturee"],
+        [nb_nouvelle, nb_en_cours, nb_repondue, nb_cloturee],
+        "Repartition par statut"
+    )
 
-        ligne = f"{r['Code']} | {r['Nom']} {r['Prénom']} | {r['Priorité']} | {r['Statut']} | {zone_pdf}"
+    # ── Construction du PDF avec Platypus ────────────────────
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=1.5*cm, leftMargin=1.5*cm,
+        topMargin=1.5*cm,   bottomMargin=1.5*cm
+    )
 
-        pdf.drawString(50, y, ligne[:120])
-        y -= 20
+    styles = getSampleStyleSheet()
 
-    pdf.save()
+    style_title = ParagraphStyle(
+        "CustomTitle",
+        parent=styles["Title"],
+        fontSize=18,
+        fontName=arabic_font,
+        textColor=colors.HexColor("#2c7a3a"),
+        spaceAfter=4,
+    )
+    style_subtitle = ParagraphStyle(
+        "Subtitle",
+        parent=styles["Normal"],
+        fontSize=11,
+        fontName=arabic_font,
+        textColor=colors.HexColor("#555555"),
+        spaceAfter=2,
+    )
+    style_section = ParagraphStyle(
+        "Section",
+        parent=styles["Heading2"],
+        fontSize=12,
+        fontName=arabic_font,
+        textColor=colors.HexColor("#2c7a3a"),
+        spaceBefore=14,
+        spaceAfter=6,
+        borderPad=4,
+    )
+    style_body = ParagraphStyle(
+        "Body",
+        parent=styles["Normal"],
+        fontSize=9,
+        fontName=arabic_font,
+        leading=14,
+    )
+    style_note = ParagraphStyle(
+        "Note",
+        parent=styles["Normal"],
+        fontSize=8,
+        fontName=arabic_font,
+        textColor=colors.HexColor("#777777"),
+        leading=12,
+    )
+
+    from datetime import datetime
+    now = datetime.now().strftime("%d/%m/%Y a %H:%M")
+
+    story = []
+
+    # ── En-tête ──────────────────────────────────────────────
+    story.append(Paragraph("Commune de Kenitra", style_subtitle))
+    story.append(Paragraph(
+        f"Rapport des reclamations - {nom_division}", style_title
+    ))
+    story.append(Paragraph(f"Genere le {now}", style_note))
+    story.append(HRFlowable(width="100%", thickness=1.5,
+                             color=colors.HexColor("#2c7a3a"), spaceAfter=10))
+
+    # ── Synthèse chiffrée ────────────────────────────────────
+    story.append(Paragraph("1. Synthese globale", style_section))
+    story.append(Paragraph(
+        f"Ce rapport presente l'etat des reclamations citoyennes affectees a la "
+        f"{nom_division}. Au total, {total} reclamation(s) sont enregistrees "
+        f"dans ce rapport. Le taux de cloture actuel est de {taux_cloture}%.",
+        style_body
+    ))
+    story.append(Spacer(1, 8))
+
+    # Tableau de synthèse
+    synth_data = [
+        ["Indicateur",              "Valeur"],
+        ["Total des reclamations",  str(total)],
+        ["Nouvelles",               str(nb_nouvelle)],
+        ["En cours de traitement",  str(nb_en_cours)],
+        ["Repondues",               str(nb_repondue)],
+        ["Cloturees",               str(nb_cloturee)],
+        ["Taux de cloture",         f"{taux_cloture}%"],
+        ["Urgentes",                str(nb_urgente)],
+        ["Priorite elevee",         str(nb_elevee)],
+    ]
+    synth_table = Table(synth_data, colWidths=[10*cm, 4*cm])
+    synth_table.setStyle(TableStyle([
+        ("BACKGROUND",    (0, 0), (-1, 0),  colors.HexColor("#2c7a3a")),
+        ("TEXTCOLOR",     (0, 0), (-1, 0),  colors.white),
+        ("FONTNAME",      (0, 0), (-1, 0),  arabic_font + "-Bold" if arabic_font == "Helvetica" else arabic_font),
+        ("FONTSIZE",      (0, 0), (-1, 0),  10),
+        ("ALIGN",         (1, 0), (1, -1),  "CENTER"),
+        ("FONTNAME",      (0, 1), (-1, -1), arabic_font),
+        ("FONTSIZE",      (0, 1), (-1, -1), 9),
+        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [colors.HexColor("#f4f9f5"), colors.white]),
+        ("GRID",          (0, 0), (-1, -1), 0.4, colors.HexColor("#cccccc")),
+        ("TOPPADDING",    (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+        ("LEFTPADDING",   (0, 0), (-1, -1), 8),
+    ]))
+    story.append(synth_table)
+
+    # ── Section graphiques ───────────────────────────────────
+    story.append(Paragraph("2. Analyse statistique", style_section))
+    story.append(Paragraph(
+        "Les graphiques ci-dessous illustrent la repartition des reclamations "
+        "selon leur niveau de priorite et leur statut de traitement.",
+        style_body
+    ))
+    story.append(Spacer(1, 6))
+
+    # Deux graphiques côte à côte
+    pie_img = RLImage(pie_buf, width=8*cm, height=6*cm)
+    bar_img = RLImage(bar_buf, width=8*cm, height=6*cm)
+    charts_table = Table([[pie_img, bar_img]], colWidths=[9*cm, 9*cm])
+    charts_table.setStyle(TableStyle([
+        ("ALIGN",  (0, 0), (-1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    story.append(charts_table)
+
+    # Commentaire analytique automatique
+    commentaire = ""
+    if nb_urgente > 0:
+        commentaire += (
+            f"La division compte {nb_urgente} reclamation(s) urgente(s) "
+            f"necessitant une intervention prioritaire. "
+        )
+    if taux_cloture >= 50:
+        commentaire += (
+            f"Le taux de cloture de {taux_cloture}% indique une bonne "
+            f"progression dans le traitement des dossiers. "
+        )
+    elif taux_cloture > 0:
+        commentaire += (
+            f"Le taux de cloture de {taux_cloture}% suggere que des efforts "
+            f"supplementaires sont necessaires pour finaliser les dossiers en attente. "
+        )
+    if nb_en_cours > 0:
+        commentaire += (
+            f"{nb_en_cours} dossier(s) sont actuellement en cours de traitement."
+        )
+
+    if commentaire:
+        story.append(Spacer(1, 6))
+        story.append(Paragraph(commentaire, style_body))
+
+    # ── Liste détaillée des réclamations ─────────────────────
+    story.append(Paragraph("3. Liste detaillee des reclamations", style_section))
+    story.append(Paragraph(
+        "Le tableau suivant presente l'ensemble des reclamations incluses "
+        "dans ce rapport avec leurs informations principales.",
+        style_body
+    ))
+    story.append(Spacer(1, 6))
+
+    if data:
+        table_header = ["Code", "Citoyen", "Objet", "Priorite", "Statut", "Date"]
+        table_rows   = [table_header]
+
+        for r in data:
+            date_str     = str(r["Date"])[:10] if r["Date"] else "-"
+            objet        = prepare_arabic_text(str(r.get("Objet", "-"))[:35])
+            nom_full     = prepare_arabic_text(
+                f"{r.get('Nom', '')} {r.get('Prenom', '') or r.get('Prénom', '')}".strip()[:20]
+            )
+            priorite_val = str(r.get("Priorite", "") or r.get("Priorité", "-"))
+            statut_val   = str(r.get("Statut", "-"))
+            table_rows.append([
+                str(r.get("Code", "-")),
+                nom_full,
+                objet,
+                priorite_val,
+                statut_val,
+                date_str,
+            ])
+
+        col_widths   = [3.5*cm, 3.5*cm, 4.5*cm, 2.2*cm, 2.2*cm, 2.1*cm]
+        detail_table = Table(table_rows, colWidths=col_widths, repeatRows=1)
+
+        ts = [
+            ("BACKGROUND",    (0, 0), (-1, 0),  colors.HexColor("#2c7a3a")),
+            ("TEXTCOLOR",     (0, 0), (-1, 0),  colors.white),
+            ("FONTNAME",      (0, 0), (-1, 0),  arabic_font),
+            ("FONTSIZE",      (0, 0), (-1, -1), 8),
+            ("FONTNAME",      (0, 1), (-1, -1), arabic_font),
+            ("GRID",          (0, 0), (-1, -1), 0.3, colors.HexColor("#cccccc")),
+            ("TOPPADDING",    (0, 0), (-1, -1), 4),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 5),
+            ("ALIGN",         (3, 0), (5, -1),  "CENTER"),
+            ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+            ("ROWBACKGROUNDS",(0, 1), (-1, -1),
+             [colors.HexColor("#f4f9f5"), colors.white]),
+        ]
+
+        # Lignes urgentes en rouge
+        for i, r in enumerate(data, start=1):
+            prio = r.get("Priorite", "") or r.get("Priorité", "")
+            if prio == "urgente":
+                ts.append(("TEXTCOLOR", (3, i), (3, i), colors.HexColor("#e74c3c")))
+                ts.append(("FONTNAME",  (3, i), (3, i), arabic_font))
+
+        detail_table.setStyle(TableStyle(ts))
+        story.append(detail_table)
+
+    else:
+        story.append(Paragraph(
+            "Aucune reclamation trouvee pour les filtres selectionnes.",
+            style_body
+        ))
+
+    # ── Pied de page ─────────────────────────────────────────
+    story.append(Spacer(1, 16))
+    story.append(HRFlowable(width="100%", thickness=0.5,
+                             color=colors.HexColor("#cccccc"), spaceAfter=6))
+    story.append(Paragraph(
+        f"Rapport genere automatiquement par la plateforme Smart Complaints Management"
+        f" - Commune de Kenitra - {now}",
+        style_note
+    ))
+
+    # ── Génération finale ─────────────────────────────────────
+    doc.build(story)
     buffer.seek(0)
 
     return send_file(
@@ -748,6 +1032,7 @@ def export_division_pdf(division_id):
         download_name=f"rapport_division_{division_id}.pdf",
         mimetype="application/pdf"
     )
+
 @app.route("/reclamation/<int:reclamation_id>")
 @login_required
 def detail_reclamation(reclamation_id):
