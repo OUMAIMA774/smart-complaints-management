@@ -1,274 +1,228 @@
 # Smart Complaints Management
-### Plateforme intelligente de gestion des réclamations citoyennes
-**Commune de Kénitra — Projet de Fin d'Année 2025–2026**
+
+## 📌 Description
+
+Smart Complaints Management est une plateforme web de gestion des réclamations citoyennes développée avec Flask et MySQL.
+
+L'application permet aux citoyens de déposer des réclamations en ligne, de suivre leur état d'avancement et de recevoir les réponses des services communaux. Elle offre également aux responsables des divisions communales des outils de gestion, de traitement et d'export des données.
+
+Le système intègre une classification automatique des réclamations grâce à l'intelligence artificielle afin d'orienter chaque demande vers la division compétente.
 
 ---
 
-## Description
+## 🚀 Fonctionnalités
 
-Smart Complaints Management est une plateforme web intelligente dédiée à la gestion, au suivi et à l'analyse des réclamations citoyennes au sein de la Commune de Kénitra. Elle permet aux citoyens de déposer des réclamations en ligne, de les suivre grâce à un code unique, et aux responsables communaux de les traiter, répondre et exporter les données.
+### 👥 Citoyens
 
-Le système intègre un module de Machine Learning basé sur TF-IDF et Régression Logistique pour la classification automatique des réclamations, ainsi que l'API Google Gemini AI pour la traduction automatique français–arabe.
+* Dépôt de réclamations en ligne
+* Téléversement de pièces jointes (images ou documents)
+* Génération automatique d'un code de suivi
+* Suivi de l'état de traitement
+* Consultation des réponses communales
+* Interface bilingue Français / Arabe
+
+### 🏢 Chefs de division
+
+* Tableau de bord personnalisé
+* Consultation des réclamations affectées
+* Filtres par statut et priorité
+* Réponse aux citoyens
+* Clôture des réclamations
+* Transfert vers une autre division
+* Historique des actions
+
+### 👨‍💼 Administration
+
+* Gestion des utilisateurs
+* Gestion des divisions
+* Consultation globale des réclamations
+* Statistiques générales
+* Exports administratifs
+
+### 🤖 Intelligence Artificielle
+
+* Classification automatique des réclamations
+* Détection de la catégorie concernée
+* Attribution automatique de la division responsable
+* Support des réclamations rédigées en français et en arabe
 
 ---
 
-## Fonctionnalités
+## 🛠️ Technologies utilisées
 
-### Citoyens
-- Dépôt de réclamations en ligne avec pièce jointe
-- Génération automatique d'un code de suivi unique
-- Suivi de l'état d'avancement par CIN + code
-- Consultation des réponses de la commune
-- Interface bilingue Français / Arabe
+### Backend
 
-### Chefs de division
-- Tableau de bord personnalisé par division
-- Consultation, filtrage et tri des réclamations affectées
-- Réponse aux citoyens avec pièce jointe
-- Transfert d'une réclamation vers une autre division
-- Clôture administrative des dossiers
-- Historique complet des actions
-- Export des données (Excel, CSV, PDF avec graphiques)
+* Python
+* Flask
+* MySQL
+* mysql-connector-python
 
-### Administration
-- Gestion des utilisateurs (création, activation, désactivation)
-- Gestion des divisions et des chefs responsables
-- Supervision globale de toutes les réclamations
-- Tableaux de bord statistiques avec graphiques
-- Export global des données (Excel, PDF)
+### Frontend
+
+* HTML5
+* CSS3
+* JavaScript
+* Chart.js
 
 ### Intelligence Artificielle
-- Classification automatique par catégorie (voirie, eau, éclairage, assainissement, propreté)
-- Détection automatique du niveau de priorité (faible, moyenne, élevée, urgente)
-- Affectation automatique à la division compétente
-- Traduction automatique arabe → français via Gemini AI
-- Traduction des réponses français → arabe pour les citoyens arabophones
+
+* Scikit-learn
+* Gemini API
+* Machine Learning (classification automatique)
+
+### Génération de documents
+
+* Pandas
+* OpenPyXL
+* ReportLab
 
 ---
 
-## Technologies utilisées
+## 🗄️ Structure du projet
 
-| Couche | Technologies |
-|--------|-------------|
-| Backend | Python 3.11, Flask, MySQL |
-| Frontend | HTML5, CSS3, JavaScript, Chart.js |
-| Machine Learning | Scikit-learn, NLTK, TF-IDF, Régression Logistique |
-| Traduction IA | Google Gemini API |
-| Export documents | Pandas, OpenPyXL, ReportLab, Matplotlib |
-| Texte arabe PDF | arabic-reshaper, python-bidi |
-| Sécurité | Werkzeug (hachage des mots de passe), Sessions Flask |
+```text
+smart-complaints-management/
+│
+├── app.py
+├── config.py
+├── requirements.txt
+│
+├── database/
+│   └── database.sql
+│
+├── ml/
+│   ├── train_model.py
+│   ├── modele_reclamations.pkl
+│   └── vectorizer.pkl
+│
+├── static/
+│   ├── css/
+│   ├── images/
+│   └── uploads/
+│
+└── templates/
+    ├── index.html
+    ├── deposer_reclamation.html
+    ├── suivi.html
+    ├── resultat_suivi.html
+    ├── dashboard_division.html
+    ├── detail_reclamation.html
+    ├── exports.html
+    └── ...
+```
 
 ---
 
-## Prérequis à installer
+## 📸 Captures d'écran
 
-Avant de commencer, installer les logiciels suivants :
+### Accueil
 
-- **Python 3.11+** → https://www.python.org/downloads/
-- **XAMPP** (inclut MySQL + phpMyAdmin) → https://www.apachefriends.org/
+<img width="1355" height="611" alt="image" src="https://github.com/user-attachments/assets/afbf60ba-9739-4a6c-b26c-f5adec4f7742" />
 
----
+### Dépôt d'une réclamation
 
-## Installation étape par étape
+<img width="1364" height="608" alt="image" src="https://github.com/user-attachments/assets/0f08cf73-a1c1-4142-9d73-1abce31f70f3" />
+<img width="1363" height="611" alt="image" src="https://github.com/user-attachments/assets/4af6acd8-2d8b-4202-b4a4-301f13b7f1c8" />
 
-### Étape 1 — Télécharger le projet
 
-Télécharger et décompresser le dossier du projet, ou cloner depuis GitHub :
+### Suivi d'une réclamation
+
+<img width="1366" height="611" alt="image" src="https://github.com/user-attachments/assets/84c094c4-5267-4f3d-a804-956cde0c5806" />
+<img width="1366" height="602" alt="image" src="https://github.com/user-attachments/assets/48d4c72d-cb0b-4b9a-8381-81b815f638fc" />
+
+
+### Tableau de bord Division
+
+<img width="1364" height="604" alt="image" src="https://github.com/user-attachments/assets/5debb588-ed98-4098-b5e5-f503670949c2" />
+
+
+### Détail d'une réclamation
+
+
+<img width="1364" height="599" alt="image" src="https://github.com/user-attachments/assets/ac58a775-bddd-4680-83a2-108a01d35571" />
+
+### Tableau de bord administratifs
+
+<img width="1366" height="607" alt="image" src="https://github.com/user-attachments/assets/7c4e69a8-ff6a-4407-b8f3-3444a87d8d0d" />
+<img width="1366" height="605" alt="image" src="https://github.com/user-attachments/assets/e93dfe51-5277-4e36-9bae-0975d8269051" />
+
+
+## ⚙️ Installation
+
+### 1. Cloner le dépôt
 
 ```bash
 git clone https://github.com/OUMAIMA774/smart-complaints-management.git
 cd smart-complaints-management
 ```
 
-### Étape 2 — Installer les dépendances Python
-
-Ouvrir un terminal dans le dossier du projet et exécuter :
+### 2. Installer les dépendances
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> Si une erreur apparaît sur un package, installer manuellement :
-> `pip install flask mysql-connector-python scikit-learn nltk pandas openpyxl reportlab google-generativeai arabic-reshaper python-bidi matplotlib Werkzeug`
+### 3. Configurer MySQL
 
-### Étape 3 — Démarrer XAMPP
+Créer une base de données puis importer :
 
-1. Ouvrir XAMPP Control Panel
-2. Démarrer **Apache** et **MySQL**
-3. Ouvrir phpMyAdmin via http://localhost/phpmyadmin
-
-### Étape 4 — Importer les bases de données
-
-Deux bases de données sont nécessaires :
-
-#### Base principale (application Flask)
-1. Dans phpMyAdmin, cliquer sur **Nouvelle base de données**
-2. Nommer la base : `gestion_reclamations`
-3. Cliquer sur **Créer**
-4. Aller dans l'onglet **Importer**
-5. Sélectionner le fichier : `database/gestion_reclamations.sql`
-6. Cliquer sur **Exécuter**
-
-#### Base d'entraînement ML (optionnelle)
-> Cette base est nécessaire **uniquement** si vous souhaitez réentraîner le modèle ML.
-> Le modèle est déjà entraîné et prêt à l'emploi dans le dossier `ml/`.
-
-1. Créer une nouvelle base nommée : `data_citoyen`
-2. Importer le fichier : `database/data_citoyen.sql`
-
-### Étape 5 — Configurer la connexion à la base de données
-
-Ouvrir le fichier `config.py` et vérifier les paramètres :
-
-```python
-DB_CONFIG = {
-    "host": "localhost",
-    "user": "root",
-    "password": "",        # Mettre le mot de passe MySQL si défini
-    "database": "gestion_reclamations"
-}
+```text
+database/database.sql
 ```
 
-> Ne pas changer le nom de la base (`gestion_reclamations`). C'est la base utilisée par l'application.
+### 4. Configurer les paramètres
 
-### Étape 6 — Lancer l'application
+Modifier le fichier :
+
+```text
+config.py
+```
+
+avec les informations de connexion à votre base de données.
+
+### 5. Lancer l'application
 
 ```bash
 python app.py
 ```
 
-Puis ouvrir dans le navigateur :
+Puis ouvrir :
 
-```
+```text
 http://127.0.0.1:5001
 ```
 
 ---
 
-## Comptes de connexion par défaut
+## 📊 Fonctionnalités d'export
 
-Après import de la base, les comptes suivants sont disponibles :
-
-| Rôle | Email | Mot de passe |
-|------|-------|--------------|
-| Administrateur | admin@commune.ma | (défini dans la base) |
-| Chef de division | (selon division) | (à changer à la première connexion) |
-
-> Les chefs de division sont invités à changer leur mot de passe lors de la première connexion.
+* Export Excel
+* Export CSV
+* Export PDF
+* Export des réclamations urgentes
 
 ---
 
-## Structure du projet
+## 🔐 Sécurité
 
-```
-smart-complaints-management/
-│
-├── app.py                        ← Application principale Flask
-├── config.py                     ← Configuration BDD + clés API
-├── create_users.py               ← Script de création des utilisateurs
-├── requirements.txt              ← Dépendances Python
-│
-├── database/
-│   ├── gestion_reclamations.sql  ← Base principale (obligatoire)
-│   └── data_citoyen.sql          ← Base d'entraînement ML (optionnelle)
-│
-├── ml/
-│   ├── train_model.py            ← Script d'entraînement du modèle
-│   ├── modele_reclamations.pkl   ← Modèle ML déjà entraîné (NE PAS SUPPRIMER)
-│   └── vectorizer.pkl            ← Vectoriseur TF-IDF (NE PAS SUPPRIMER)
-│
-├── static/
-│   ├── css/style.css
-│   ├── images/logo.png
-│   └── uploads/                  ← Pièces jointes des réclamations
-│
-└── templates/                    ← Pages HTML
-    ├── index.html
-    ├── deposer_reclamation.html
-    ├── suivi.html
-    ├── resultat_suivi.html
-    ├── confirmation.html
-    ├── login.html
-    ├── changer_mot_de_passe.html
-    ├── dashboard_division.html
-    ├── detail_reclamation.html
-    ├── exports.html
-    ├── admin_dashboard.html
-    ├── admin_reclamations.html
-    ├── admin_utilisateurs.html
-    ├── admin_divisions.html
-    └── admin_exports.html
-```
+* Authentification des utilisateurs
+* Contrôle des accès par rôle
+* Protection des espaces administratifs
+* Gestion sécurisée des sessions
 
 ---
 
-## Module ML — Informations importantes
+## 👩‍🎓 Projet académique
 
-> **Ne pas relancer `train_model.py`** sauf si vous souhaitez réentraîner le modèle.
-> Les fichiers `.pkl` dans le dossier `ml/` sont déjà prêts et utilisés automatiquement par `app.py`.
+Projet réalisé dans le cadre d'un Projet de Fin d'Année (PFA) en cycle ingénieur.
 
-Si vous souhaitez réentraîner le modèle :
-1. Vérifier que la base `data_citoyen` est importée
-2. Exécuter :
-```bash
-python ml/train_model.py
-```
-Le modèle sera remplacé automatiquement.
+**Filière :** Ingénierie Data Sciences et Informatique (IDSI)
 
-**Performances du modèle actuel :**
-- Accuracy : 98.66%
-- Validation croisée moyenne : 98.2%
-- Nombre de catégories : 5 (voirie, eau, éclairage, assainissement, propreté)
+**Établissement :** Faculté des Sciences et Techniques de Mohammedia
 
 ---
 
-## Fonctionnalités d'export PDF
-
-Les rapports PDF générés contiennent :
-- Synthèse globale avec indicateurs chiffrés
-- Graphiques statistiques (répartition par priorité et par statut)
-- Commentaire analytique automatique
-- Liste détaillée des réclamations avec mise en évidence des urgences
-
----
-
-## Sécurité
-
-- Mots de passe hachés avec Werkzeug (bcrypt)
-- Sessions sécurisées Flask
-- Contrôle d'accès par rôle (citoyen / chef de division / administrateur)
-- Protection des routes sensibles
-- Désactivation possible des comptes utilisateurs
-
----
-
-## Problèmes fréquents
-
-| Problème | Solution |
-|----------|----------|
-| `ModuleNotFoundError` | Relancer `pip install -r requirements.txt` |
-| Erreur de connexion MySQL | Vérifier que XAMPP est démarré et que `config.py` est correct |
-| Page blanche au lancement | Vérifier la console Python pour l'erreur exacte |
-| Texte arabe en carrés dans le PDF | Vérifier que la police `arial.ttf` existe dans `C:\Windows\Fonts\` |
-| Erreur Gemini API | Vérifier la clé API dans `config.py` |
-
----
-
-## Projet académique
-
-**Intitulé :** Smart Complaints Management — Plateforme intelligente de gestion des réclamations citoyennes
-
-**Filière :** Ingénierie Data Science et Informatique (IDSI)
-
-**Établissement :** Faculté des Sciences et Techniques de Mohammedia — Université Hassan II de Casablanca
-
-**Encadrante académique :** Pr. Hanae SBAI
-
-**Année universitaire :** 2025–2026
-
----
-
-## Auteur
+## 👤 Auteur
 
 **Oumaima El Yamani**
 
